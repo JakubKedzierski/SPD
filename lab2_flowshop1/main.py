@@ -61,7 +61,8 @@ def total_review(tasks,machines,time_matrix):
     # return schedule, Cmax
 
 
-def johnson_for_2_machines(tasks:int,machines:int,time_matrix):
+def johnson_for_2_machines(tasks:int,machines:int,time_matrix_copy):
+    time_matrix = time_matrix_copy.copy()
     task_on_list=list(range(1,tasks+1))
     listA=[]
     listB=[]
@@ -83,6 +84,24 @@ def johnson_for_2_machines(tasks:int,machines:int,time_matrix):
         
     
     schedule = listA+listB
+
+    #Cmatrix = [[0 for x in range(tasks)] for y in range(2)]
+    
+    """
+    Cmatrix=[time_matrix_copy[schedule[0]-1][0]]
+    for i in range(1,tasks):
+        Cmatrix.append(time_matrix_copy[schedule[i]-1][0]+Cmatrix[i-1])
+    
+    Cmax=Cmatrix[0]+time_matrix_copy[schedule[i]-1][1]
+    for i in range(0,tasks):
+        if Cmax >= Cmatrix[i]:
+
+    
+    print(Cmatrix)
+
+    TO DO -> Cmax dla danego schedule
+    """
+    
     print(schedule)
     # return schedule, Cmax
     return 0;
