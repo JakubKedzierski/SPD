@@ -1,13 +1,14 @@
 import plotly.express as px
 import pandas as pd
-#pip3 install plotly==4.14.3
-#pip install pandas
+import numpy as np
+
+
 
 def read_data_set(file):
     #file.readline()
     tasks, machines = [int(x) for x in next(file).split()] 
     time_matrix = [] 
-    
+
     for i in range(0,tasks):
         time_matrix.append([int(x) for x in next(file).split()])
     '''    
@@ -61,9 +62,31 @@ def total_review(tasks,machines,time_matrix):
     # return schedule, Cmax
 
 
-def johnson_for_2_machines(tasks,machines,time_matrix):
-    pass
+def johnson_for_2_machines(tasks:int,machines:int,time_matrix):
+    task_on_list=list(range(1,tasks+1))
+    listA=[]
+    listB=[]
+    time_matrix=np.array(time_matrix)
+    
+    while True:
+        if not task_on_list:
+            break
+
+        index=np.unravel_index(time_matrix.argmin(), time_matrix.shape)
+        time_matrix[index[0],0] = np.iinfo(np.int64).max
+        time_matrix[index[0],1] = np.iinfo(np.int64).max
+        
+        task_on_list.remove(index[0]+1)
+        if index[1] == 0:
+            listA.append(index[0]+1)
+        else:
+            listB.insert(0,index[0]+1)
+        
+    
+    schedule = listA+listB
+    print(schedule)
     # return schedule, Cmax
+    return 0;
 
 
 def johnson_for_N_machines(tasks,machines,time_matrix):
@@ -74,7 +97,7 @@ def johnson_for_N_machines(tasks,machines,time_matrix):
 
 def main():
     path=""
-    file_name="data0.txt"
+    file_name="data_2_machines.txt"
     number_of_datasets_to_read=1   # liczba setów, jakie mają zostac odczytane z pliku - mozemy na poczatku pracowac na tym pierwszym poczatkowym
 
     try:
@@ -82,17 +105,14 @@ def main():
             for i in range(0,number_of_datasets_to_read):
                 ##tasks,machines,time_matrix,Cmax,schedule=read_data_set(file)
                 tasks,machines,time_matrix=read_data_set(file)
-                """
-                Cmax i schedule - sa to wyniki z danego datasetu, mozemy je uzyc gdzies pozniej do testowania danych
-                na przyklad w taki sposób:
-                """
+                print(johnson_for_2_machines(tasks,machines,time_matrix))
+
+                #draw_gantt([2,3,4,1],time_matrix)
 
                 """
                  our_schedule, our_Cmax = johnson_for_2_machines
                  if (our_schedule == schedule and our_Cmax = Cmax) good_result_count++
                 """
-                draw_gantt([1,4,3,2],time_matrix)
-                #print(tasks,machines,"\n",time_matrix,"\n")
                 
             
 
