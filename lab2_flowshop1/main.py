@@ -1,7 +1,7 @@
 import plotly.express as px
 import pandas as pd
 #pip3 install plotly==4.14.3
-#pip install pandas
+#pip3 install pandas
 
 def read_data_set(file):
     #file.readline()
