@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 
 
-
 def read_data_set(file):
     #file.readline()
     tasks, machines = [int(x) for x in next(file).split()] 
