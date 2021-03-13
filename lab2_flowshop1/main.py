@@ -2,15 +2,11 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 
+def read_file_with_lots_of_datasets(file):
+    file.readline()
+    
+    tasks, machines, time_matrix = read_data_set(file)
 
-def read_data_set(file):
-    #file.readline()
-    tasks, machines = [int(x) for x in next(file).split()] 
-    time_matrix = [] 
-
-    for i in range(0,tasks):
-        time_matrix.append([int(x) for x in next(file).split()])
-    '''    
     file.readline()
     file.readline()
     Cmax = int(file.readline())
@@ -18,8 +14,17 @@ def read_data_set(file):
     file.readline()
 
     return tasks,machines,time_matrix,Cmax,schedule
-    '''
+
+
+def read_data_set(file):
+    tasks, machines = [int(x) for x in next(file).split()] 
+    time_matrix = [] 
+
+    for i in range(0,tasks):
+        time_matrix.append([int(x) for x in next(file).split()])
+
     return tasks, machines, time_matrix
+
 
 def draw_gantt(schedule,time_matrix):
     if len(time_matrix) != len(schedule):
@@ -132,32 +137,30 @@ def johnson_for_N_machines(tasks,machines,time_matrix):
 
 def main():
     path=""
-    file_name="data0.txt"
-    number_of_datasets_to_read=1   # liczba setów, jakie mają zostac odczytane z pliku - mozemy na poczatku pracowac na tym pierwszym poczatkowym
+    file_name="./datasets/" + "data.txt"
+    number_of_datasets_to_read=5  # liczba setów, jakie mają zostac odczytane z pliku - mozemy na poczatku pracowac na tym pierwszym poczatkowym
 
     try:
         with open(path+file_name, "r") as file:
             for i in range(0,number_of_datasets_to_read):
-                ##tasks,machines,time_matrix,Cmax,schedule=read_data_set(file)
-                tasks,machines,time_matrix=read_data_set(file)
-                
-                
-                johnson_for_N_machines(tasks,machines,time_matrix)
-                
-                # schedule,Cmax=johnson_for_2_machines(tasks,time_matrix)
-                # draw_gantt(schedule,time_matrix)
 
-                """
-                 our_schedule, our_Cmax = johnson_for_2_machines
-                 if (our_schedule == schedule and our_Cmax = Cmax) good_result_count++
-                """
+                tasks,machines,time_matrix,Cmax,schedule=read_file_with_lots_of_datasets(file)     
                 
-            
+                #tasks,machines,time_matrix=read_data_set(file)     
+                
+                schedule_from_func=johnson_for_N_machines(tasks,machines,time_matrix)
+                
+                if schedule_from_func != schedule:
+                    print("Błąd",schedule_from_func,schedule)
+                
+                """
+                schedule=johnson_for_N_machines(tasks,machines,time_matrix)
+                draw_gantt(schedule,time_matrix)
+                """
 
     except FileNotFoundError:
         print("File not found.")
         raise FileNotFoundError
-
 
 
 if __name__ == '__main__':
