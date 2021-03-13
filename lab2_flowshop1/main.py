@@ -61,19 +61,20 @@ def total_review(tasks,machines,time_matrix):
     # return schedule, Cmax
 
 
-def johnson_for_2_machines(tasks:int,machines:int,time_matrix_copy):
+def johnson_for_2_machines(tasks:int,time_matrix_copy):
     time_matrix = time_matrix_copy.copy()
     task_on_list=list(range(1,tasks+1))
     listA=[]
     listB=[]
     time_matrix=np.array(time_matrix)
     
+
     while True:
         if not task_on_list:
             break
 
         index=np.unravel_index(time_matrix.argmin(), time_matrix.shape)
-        time_matrix[index[0],0] = np.iinfo(np.int64).max
+        time_matrix[index[0],0] = np.iinfo(np.int64).max   # przypisanie maksymalnych wartosci do czasow zadan ktore 'wyciagnelismy' z listy
         time_matrix[index[0],1] = np.iinfo(np.int64).max
         
         task_on_list.remove(index[0]+1)
@@ -107,14 +108,31 @@ def johnson_for_2_machines(tasks:int,machines:int,time_matrix_copy):
 
 
 def johnson_for_N_machines(tasks,machines,time_matrix):
-    pass
-    # return schedule, Cmax
+    imaginary_times =  np.zeros((tasks,2))
+    
+    if machines%2 == 0:
+        half=int(machines/2)  # polowa maszyn ktore wpadaja do jednej z wirtualnych maszyn
+    else:
+        half=int(machines/2)+1
+   
+    for i in range(0,tasks):
+        for j in range(0,half):
+            imaginary_times[i,0]+=time_matrix[i][j]
+        for k in range(half-1,machines):
+            imaginary_times[i,1]+=time_matrix[i][k]
+    
+
+    schedule,Cmax = johnson_for_2_machines(tasks,imaginary_times)
+    
+    return schedule
+    # do zrobienia jeszcze liczenie Cmax
+
 
 
 
 def main():
     path=""
-    file_name="data_2_machines.txt"
+    file_name="data0.txt"
     number_of_datasets_to_read=1   # liczba setów, jakie mają zostac odczytane z pliku - mozemy na poczatku pracowac na tym pierwszym poczatkowym
 
     try:
@@ -123,9 +141,11 @@ def main():
                 ##tasks,machines,time_matrix,Cmax,schedule=read_data_set(file)
                 tasks,machines,time_matrix=read_data_set(file)
                 
-                schedule,Cmax=johnson_for_2_machines(tasks,machines,time_matrix)
-
-                draw_gantt(schedule,time_matrix)
+                
+                johnson_for_N_machines(tasks,machines,time_matrix)
+                
+                # schedule,Cmax=johnson_for_2_machines(tasks,time_matrix)
+                # draw_gantt(schedule,time_matrix)
 
                 """
                  our_schedule, our_Cmax = johnson_for_2_machines
