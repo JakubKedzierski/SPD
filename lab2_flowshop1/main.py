@@ -111,7 +111,12 @@ def johnson_for_2_machines(tasks:int,time_matrix_copy):
 
     return schedule,Cmax;
 
-
+"""
+sytuacja jest taka, ze wybieramy sobie ktore maszyny trafiaja do wirtualnej maszyny 1 a ktore do maszyny 2 -
+ten wybor jest dowolny, co sprawia, ze mozna otrzymac rozne rezultaty - tak to rozumiem
+jesli w pliku od dr Makuchowskiego sa tylko poprawne wyniki, a johnson moze zwracac niekoniecznie najoptymalniejszy wynik
+to ten algorytm ponizej jest chyba poprawny
+"""
 def johnson_for_N_machines(tasks,machines,time_matrix):
     imaginary_times =  np.zeros((tasks,2))
     
@@ -131,8 +136,6 @@ def johnson_for_N_machines(tasks,machines,time_matrix):
     
     return schedule
     # do zrobienia jeszcze liczenie Cmax
-
-
 
 
 def main():
