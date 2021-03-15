@@ -78,6 +78,7 @@ def count_cmax(schedule, time_matrix):
                 else:
                     Cmatrix[i][j]=max(Cmatrix[i-1][j],Cmatrix[i][j-1])+time_matrix[schedule[i]-1][j]
 
+    #print(schedules[k],Cmatrix[tasks-1][machines-1])                
     return Cmatrix[tasks-1][machines-1]
 
 def total_review(tasks,machines,time_matrix):
@@ -90,7 +91,6 @@ def total_review(tasks,machines,time_matrix):
     schedule_index=0
     for k in range(0,len(schedules)):
         Cmax_func=count_cmax(schedules[k],time_matrix)
-        #print(schedules[k],Cmatrix[tasks-1][machines-1])
         if k==0:
             Cmax=Cmax_func
             schedule_index=k
