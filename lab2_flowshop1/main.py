@@ -107,7 +107,6 @@ def johnson_for_2_machines(tasks:int,time_matrix_copy):
     listB=[]
     time_matrix=np.array(time_matrix)
     
-
     while True:
         if not task_on_list:
             break
@@ -117,31 +116,14 @@ def johnson_for_2_machines(tasks:int,time_matrix_copy):
         time_matrix[index[0],1] = np.iinfo(np.int64).max
         
         task_on_list.remove(index[0]+1)
-        if index[1] == 0:
+        if index[1] == 0: # jesli pierwsza maszyna to:
             listA.append(index[0]+1)
         else:
             listB.insert(0,index[0]+1)
         
     
     schedule = listA+listB
-    
-    
-    Cmax=0  # max czas wykonania wszystkich operacji
-    machine_tasks_ends=[] # tablica czasow zakonczenia kolejnych zadan na pierwszej maszynie
-
-    for i in range(0,tasks):
-        if i==0:
-            machine_tasks_ends.append(time_matrix_copy[schedule[i]-1][0])
-            Cmax=time_matrix_copy[schedule[i]-1][0]
-        else:
-            machine_tasks_ends.append(machine_tasks_ends[i-1]+time_matrix_copy[schedule[i]-1][0])
-            if machine_tasks_ends[i] > ( Cmax + time_matrix_copy[schedule[i-1]-1][1] ):
-                Cmax = machine_tasks_ends[i]
-            else:
-                Cmax = Cmax + time_matrix_copy[schedule[i-1]-1][1]
-
-    Cmax =  Cmax + time_matrix_copy[schedule[-1]-1][1]  
-    #na koniec musimy dodac jeszcze czas potrzebny na wykonanie ostatniego zadania z harmonogramu na 2 maszynie
+    Cmax=count_cmax(schedule,time_matrix_copy)
 
     return schedule,Cmax;
 
@@ -166,15 +148,15 @@ def johnson_for_N_machines(tasks,machines,time_matrix):
             imaginary_times[i,1]+=time_matrix[i][k]
     
 
-    schedule,Cmax = johnson_for_2_machines(tasks,imaginary_times)
+    schedule,virutal_c_max = johnson_for_2_machines(tasks,imaginary_times)
+    Cmax = count_cmax(schedule,time_matrix)
     
-    return schedule
-    # do zrobienia jeszcze liczenie Cmax
+    return schedule,Cmax
 
 
 def main():
     path=""
-    file_name="./datasets/" + "data0.txt"
+    file_name="./datasets/" + "data5.txt"
     number_of_datasets_to_read=1  # liczba setów, jakie mają zostac odczytane z pliku - mozemy na poczatku pracowac na tym pierwszym poczatkowym
 
     try:
@@ -185,17 +167,9 @@ def main():
                 
                 tasks,machines,time_matrix=read_data_set(file)     
                 
-                #schedule_from_func=johnson_for_N_machines(tasks,machines,time_matrix)
-                """
-                if schedule_from_func != schedule:
-                    print("Błąd",schedule_from_func,schedule)
-                
-                """
-                #schedule=johnson_for_N_machines(tasks,machines,time_matrix)
-                schedule,Cmax=total_review(tasks,machines,time_matrix) #testuj tylko dla danych z nie wiecej niz 10 taskami
+                schedule_from_func,Cmax=johnson_for_N_machines(tasks,machines,time_matrix)
                 print(Cmax)
-
-                draw_gantt(schedule,time_matrix)
+                draw_gantt(schedule_from_func,time_matrix)
                 
 
     except FileNotFoundError:
@@ -209,5 +183,5 @@ if __name__ == '__main__':
 
 """ 
 do zapytania o johsona N maszynowego, liczenie Cmax w funkcji, jakies zestawy danych do testowania 2 maszynowego johsonna, czy mamy robic sprawko z
-tego
+tego, czy ma byc jakies gui, w jaki sposob bedzie weryfikowana poprawnosc - czy bedziemy to na zywo jakos pokazywac - uruchamianie roznych algorytmow
 """
