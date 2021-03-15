@@ -61,6 +61,24 @@ def draw_gantt(schedule,time_matrix):
     pass
 
 
+def count_cmax(schedule, time_matrix):
+    tasks=len(time_matrix)
+    machines=len(time_matrix[0])
+    Cmatrix=[[0 for x in range(machines)] for y in range(tasks)] #macierz czasow zakonczen poszczegolnych zadan na danej maszynie
+    for i in range(0,tasks):
+        for j in range(0,machines):
+            if i==0:
+                if j==0:
+                    Cmatrix[i][j]=time_matrix[schedule[i]-1][j]
+                else:
+                    Cmatrix[i][j]=(Cmatrix[i][j-1]+time_matrix[schedule[i]-1][j])
+            else:
+                if j==0:
+                    Cmatrix[i][j]=Cmatrix[i-1][j]+time_matrix[schedule[i]-1][j]
+                else:
+                    Cmatrix[i][j]=max(Cmatrix[i-1][j],Cmatrix[i][j-1])+time_matrix[schedule[i]-1][j]
+
+    return Cmatrix[tasks-1][machines-1]
 
 def total_review(tasks,machines,time_matrix):
     if tasks!=len(time_matrix):
@@ -71,25 +89,13 @@ def total_review(tasks,machines,time_matrix):
     Cmax=0
     schedule_index=0
     for k in range(0,len(schedules)):
-        Cmatrix=[[0 for x in range(machines)] for y in range(tasks)] #macierz czasow zakonczen poszczegolnych zadan na danej maszynie
-        for i in range(0,tasks):
-            for j in range(0,machines):
-                if i==0:
-                    if j==0:
-                        Cmatrix[i][j]=time_matrix[schedules[k][i]-1][j]
-                    else:
-                        Cmatrix[i][j]=(Cmatrix[i][j-1]+time_matrix[schedules[k][i]-1][j])
-                else:
-                    if j==0:
-                        Cmatrix[i][j]=Cmatrix[i-1][j]+time_matrix[schedules[k][i]-1][j]
-                    else:
-                        Cmatrix[i][j]=max(Cmatrix[i-1][j],Cmatrix[i][j-1])+time_matrix[schedules[k][i]-1][j]
+        Cmax_func=count_cmax(schedules[k],time_matrix)
         #print(schedules[k],Cmatrix[tasks-1][machines-1])
         if k==0:
-            Cmax=Cmatrix[tasks-1][machines-1]
+            Cmax=Cmax_func
             schedule_index=k
-        if Cmax>Cmatrix[tasks-1][machines-1]:
-            Cmax=Cmatrix[tasks-1][machines-1]
+        if Cmax>Cmax_func:
+            Cmax=Cmax_func
             schedule_index=k
     return schedules[schedule_index],Cmax
 
