@@ -168,3 +168,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+""" 
+do zapytania o johsona N maszynowego, liczenie Cmax w funkcji, jakies zestawy danych do testowania 2 maszynowego johsonna, czy mamy robic sprawko z
+tego
+"""
