@@ -127,12 +127,7 @@ def johnson_for_2_machines(tasks:int,time_matrix_copy):
 
     return schedule,Cmax;
 
-"""
-sytuacja jest taka, ze wybieramy sobie ktore maszyny trafiaja do wirtualnej maszyny 1 a ktore do maszyny 2 -
-ten wybor jest dowolny, co sprawia, ze mozna otrzymac rozne rezultaty - tak to rozumiem
-jesli w pliku od dr Makuchowskiego sa tylko poprawne wyniki, a johnson moze zwracac niekoniecznie najoptymalniejszy wynik
-to ten algorytm ponizej jest chyba poprawny
-"""
+
 def johnson_for_N_machines(tasks,machines,time_matrix):
     imaginary_times =  np.zeros((tasks,2))
     
@@ -156,20 +151,20 @@ def johnson_for_N_machines(tasks,machines,time_matrix):
 
 def main():
     path=""
-    file_name="./datasets/" + "data5.txt"
+    file_name="./datasets/" + "data6.txt"
     number_of_datasets_to_read=1  # liczba setów, jakie mają zostac odczytane z pliku - mozemy na poczatku pracowac na tym pierwszym poczatkowym
 
     try:
         with open(path+file_name, "r") as file:
             for i in range(0,number_of_datasets_to_read):
 
-                #tasks,machines,time_matrix,Cmax,schedule=read_file_with_lots_of_datasets(file)     
-                
                 tasks,machines,time_matrix=read_data_set(file)     
-                
+            
+
                 schedule_from_func,Cmax=johnson_for_N_machines(tasks,machines,time_matrix)
                 print(Cmax)
-                draw_gantt(schedule_from_func,time_matrix)
+
+                #draw_gantt(schedule_from_func,time_matrix)
                 
 
     except FileNotFoundError:
@@ -181,7 +176,15 @@ if __name__ == '__main__':
     main()
 
 
-""" 
-do zapytania o johsona N maszynowego, liczenie Cmax w funkcji, jakies zestawy danych do testowania 2 maszynowego johsonna, czy mamy robic sprawko z
-tego, czy ma byc jakies gui, w jaki sposob bedzie weryfikowana poprawnosc - czy bedziemy to na zywo jakos pokazywac - uruchamianie roznych algorytmow
 """
+1 na kilku wariantach - czy nie ma bledow w przeskakiwaniu zadan
+2 wyswietlamy dla wszystkich ale przy wiekszych jest nieczytelnie
+3 pojedyncze zadanie, testowalismy to - dodanie zadania to "zwiekszanie silni" O(n!), a dodanie maszyny to dodanie kilku operacji
+4. 10 zadan : 3,5min
+5. przewaznie sa takie same
+6. dopoki czas jest spoko - liczba zadan nie przekracza 10 
+7.  mozna, testowane ale daje gorsze wyniki ze wzgledu na swoja naiwnosc
+8. zazwyczaj sa wieksze, zdarzaja sie przypadki ze sa identyczne lub zblizone
+9 mozna, jest gorsza o jakies 2-3 tysiace od optymalnej, ale czas wykonania jest natychmiastowy
+"""
+
