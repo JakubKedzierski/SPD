@@ -7,7 +7,7 @@ def find_critical_path(schedule, time_matrix):
     machines=len(time_matrix[0])
     Cmatrix = count_Cmatrix(schedule, time_matrix)
     critical_path=[]
-    critical_path.append((tasks, machines ))
+    critical_path.append((schedule[tasks-1], machines ))
     i=tasks-1
     j=machines-1
 
@@ -25,7 +25,7 @@ def find_critical_path(schedule, time_matrix):
             else:
                 i = i - 1
 
-        critical_path.append((i+1, j+1)) # sciezka w formacie [ (zadanie, maszyna), (zadanie, maszyna) ... ]
+        critical_path.append((schedule[i], j+1)) # sciezka w formacie [ (zadanie, maszyna), (zadanie, maszyna) ... ]
 
     print_critical_path(critical_path)
     return critical_path
