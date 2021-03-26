@@ -54,7 +54,7 @@ def total_review(tasks,machines,time_matrix):
 
 def main():
     path=""
-    file_name="./datasets/" + "data2.txt"
+    file_name="./datasets/" + "data001v.txt"
     number_of_datasets_to_read=1  # liczba setów, jakie mają zostac odczytane z pliku - mozemy na poczatku pracowac na tym pierwszym poczatkowym
 
     try:
@@ -64,13 +64,12 @@ def main():
                 tasks,machines,time_matrix=read_data_set(file)     
 
                 #schedule_from_func,Cmax = total_review(tasks,machines,time_matrix)
-                schedule_from_func=(1,2,3,4)
-                #schedule_from_func,Cmax=johnson_for_N_machines(tasks,machines,time_matrix)
+                schedule_from_func,Cmax=johnson_for_N_machines(tasks,machines,time_matrix)
                 #schedule_from_func,Cmax = johnson_for_2_machines(tasks,time_matrix)
-                find_critical_path(schedule_from_func,time_matrix)
+                critical = find_critical_path(schedule_from_func,time_matrix)
 
 
-                #draw_gantt(schedule_from_func,time_matrix)
+                draw_gantt(schedule_from_func,time_matrix)
                 
 
     except FileNotFoundError:
