@@ -6,7 +6,6 @@ import numpy as np
 from itertools import permutations
 
 
-
 def read_file_with_lots_of_datasets(file):
     file.readline()
     
@@ -54,8 +53,8 @@ def total_review(tasks,machines,time_matrix):
 
 def main():
     path=""
-    file_name="./datasets/" + "data001v.txt"
-    number_of_datasets_to_read=1  # liczba setów, jakie mają zostac odczytane z pliku - mozemy na poczatku pracowac na tym pierwszym poczatkowym
+    file_name="./datasets/" + "data4.txt"
+    number_of_datasets_to_read=1
 
     try:
         with open(path+file_name, "r") as file:
@@ -63,14 +62,16 @@ def main():
 
                 tasks,machines,time_matrix=read_data_set(file)     
 
-                #schedule_from_func,Cmax = total_review(tasks,machines,time_matrix)
-                schedule_from_func,Cmax=johnson_for_N_machines(tasks,machines,time_matrix)
-                #schedule_from_func,Cmax = johnson_for_2_machines(tasks,time_matrix)
-                critical = find_critical_path(schedule_from_func,time_matrix)
+                schedule_from_func,Cmax=extend_neh_version_1(tasks,machines,time_matrix)
+                print(schedule_from_func,Cmax)
+                schedule_from_func,Cmax=NEH_algorithm(tasks,machines,time_matrix)
+                print(schedule_from_func,Cmax)
+
+                #schedule_from_func,Cmax=total_review(tasks,machines,time_matrix)
+                #print(schedule_from_func,Cmax)
 
 
                 draw_gantt(schedule_from_func,time_matrix)
-                
 
     except FileNotFoundError:
         print("File not found.")

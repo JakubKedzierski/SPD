@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def count_cmax(schedule, time_matrix):
-    tasks=len(time_matrix)
+    tasks=len(schedule)
     machines=len(time_matrix[0])
     Cmatrix = count_Cmatrix(schedule, time_matrix)
 
@@ -13,7 +13,7 @@ def count_cmax(schedule, time_matrix):
 
 
 def count_Cmatrix(schedule, time_matrix):
-    tasks=len(time_matrix)
+    tasks=len(schedule)
     machines=len(time_matrix[0])
     Cmatrix=np.zeros((tasks,machines))
     for i in range(0,tasks):
