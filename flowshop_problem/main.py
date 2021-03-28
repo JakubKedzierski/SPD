@@ -64,6 +64,8 @@ def main():
 
                 schedule_from_func,Cmax=extend_neh_version_1(tasks,machines,time_matrix)
                 print(schedule_from_func,Cmax)
+                schedule_from_func,Cmax=extend_neh_version_2(tasks,machines,time_matrix)
+                print(schedule_from_func,Cmax)
                 schedule_from_func,Cmax=NEH_algorithm(tasks,machines,time_matrix)
                 print(schedule_from_func,Cmax)
 
@@ -71,7 +73,7 @@ def main():
                 #print(schedule_from_func,Cmax)
 
 
-                draw_gantt(schedule_from_func,time_matrix)
+                #draw_gantt(schedule_from_func,time_matrix)
 
     except FileNotFoundError:
         print("File not found.")

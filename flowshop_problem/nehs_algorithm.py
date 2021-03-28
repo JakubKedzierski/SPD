@@ -1,6 +1,7 @@
 import numpy as np
 from Cmatrix_operations import *
 
+
 def find_critical_path(schedule, time_matrix):
     tasks=len(schedule)
     machines=len(time_matrix[0])
@@ -30,10 +31,12 @@ def find_critical_path(schedule, time_matrix):
 
     return critical_path
 
+
 def print_critical_path(critical_path):
     print("Critical path")
     for i in range(0,len(critical_path)):
         print("Krok",i,"Maszyna:",critical_path[i][1], "Zadanie:",critical_path[i][0])
+
 
 def NEH_algorithm(tasks,machine,time_matrix):
     time_matrix=np.array(time_matrix)
@@ -59,6 +62,7 @@ def NEH_algorithm(tasks,machine,time_matrix):
         schedule.insert(best_in,sorted_order[i])
     return schedule,Cmax
 
+
 def find_longest_on_critical_path(schedule,time_matrix):
 
     critical = find_critical_path(schedule,time_matrix)
@@ -70,6 +74,13 @@ def find_longest_on_critical_path(schedule,time_matrix):
     longest = max(times_on_critical_path, key=lambda item:item[1])[0] # wyciagamy najdluzsze zadanie (ze wzgledu na tuple jest lambda)
 
     return longest
+
+
+def find_task_with_biggest_sum_of_operation_on_cirtical_path(schedule,time_matrix):
+    critical = find_critical_path(schedule,time_matrix)
+    task, machine = zip(*critical)
+    biggest = max(task, key=task.count)
+    return biggest
 
 
 def extend_neh_version_1(tasks,machine,time_matrix):
@@ -102,6 +113,56 @@ def extend_neh_version_1(tasks,machine,time_matrix):
         Zaczynamy krok 5
         """
         longest_task = find_longest_on_critical_path(temp_schedule,time_matrix)
+        schedule.remove(longest_task)
+
+        temp_schedule = schedule
+        for j in range(0,i+1):
+            temp_schedule.insert(j,longest_task)
+
+            if j == 0:
+                Cmax = count_cmax(temp_schedule,time_matrix)
+            else:
+                Cmax_temp = count_cmax(temp_schedule,time_matrix)
+                if Cmax_temp < Cmax:
+                    best_in = j
+                    Cmax = Cmax_temp
+
+            temp_schedule.pop(j)
+
+        schedule.insert(best_in,longest_task)
+
+    return schedule,Cmax
+
+def extend_neh_version_2(tasks,machine,time_matrix):
+    time_matrix=np.array(time_matrix)
+    w2=np.sum(time_matrix,axis=1).tolist()
+    w=[i * (-1) for i in w2]
+    sorted_order=np.argsort(w,kind='mergesort') + 1
+    schedule=[sorted_order[0]]
+
+    for i in range (1,tasks):
+        best_in=0
+        temp_schedule=schedule
+
+        for j in range(0,i+1):
+            temp_schedule.insert(j,sorted_order[i])
+
+            if j == 0:
+                Cmax = count_cmax(temp_schedule,time_matrix)
+            else:
+                Cmax_temp = count_cmax(temp_schedule,time_matrix)
+                if Cmax_temp < Cmax:
+                    best_in = j
+                    Cmax = Cmax_temp
+
+            temp_schedule.pop(j)
+
+        schedule.insert(best_in,sorted_order[i])
+
+        """
+        Zaczynamy krok 5
+        """
+        longest_task = find_task_with_biggest_sum_of_operation_on_cirtical_path(temp_schedule,time_matrix)
         schedule.remove(longest_task)
 
         temp_schedule = schedule
