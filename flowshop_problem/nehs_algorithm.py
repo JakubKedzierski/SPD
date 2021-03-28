@@ -8,6 +8,7 @@ def find_critical_path(schedule, time_matrix):
     Cmatrix = count_Cmatrix(schedule, time_matrix)
     critical_path=[]
     critical_path.append((schedule[tasks-1], machines ))
+    # idziemy od końca
     i=tasks-1
     j=machines-1
 
@@ -15,9 +16,9 @@ def find_critical_path(schedule, time_matrix):
         if (j-1) < 0 and (i-1) <0 : # gdy przeszlimy po wszystkich maszynach to koniec
             break
 
-        if (i - 1) < 0:
+        if (i - 1) < 0: # gdy nie ma zadan to poruszamy sie po maszynie
             j = j - 1
-        elif (j-1) < 0:
+        elif (j-1) < 0: # gdy nie ma maszyn to poruszamy sie po zadaniach
             i = i - 1
         else:
             if Cmatrix[i][j-1] >= Cmatrix[i-1][j]: #porownujemy ktora operacja decyduje o wyborze sciezki
