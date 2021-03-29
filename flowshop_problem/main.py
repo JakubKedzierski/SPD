@@ -53,7 +53,7 @@ def total_review(tasks,machines,time_matrix):
 
 def main():
     path=""
-    file_name="./datasets/" + "data4.txt"
+    file_name="./datasets/" + "data011.txt"
     number_of_datasets_to_read=1
 
     try:
@@ -62,13 +62,19 @@ def main():
 
                 tasks,machines,time_matrix=read_data_set(file)     
 
+                
                 schedule_from_func,Cmax=extend_neh_version_1(tasks,machines,time_matrix)
                 print(schedule_from_func,Cmax)
                 schedule_from_func,Cmax=extend_neh_version_2(tasks,machines,time_matrix)
                 print(schedule_from_func,Cmax)
+                schedule_from_func,Cmax=extend_neh_version_3(tasks,machines,time_matrix)
+                print(schedule_from_func,Cmax)
+                schedule_from_func,Cmax=extend_neh_version_4(tasks,machines,time_matrix)
+                print(schedule_from_func,Cmax)
                 schedule_from_func,Cmax=NEH_algorithm(tasks,machines,time_matrix)
                 print(schedule_from_func,Cmax)
 
+                
                 #schedule_from_func,Cmax=total_review(tasks,machines,time_matrix)
                 #print(schedule_from_func,Cmax)
 
