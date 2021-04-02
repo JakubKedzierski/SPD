@@ -7,31 +7,110 @@ def find_critical_path(schedule, time_matrix):
     machines=len(time_matrix[0])
     Cmatrix = count_Cmatrix(schedule, time_matrix)
     critical_path=[]
+    critical_path_list=[]
     critical_path.append((schedule[tasks-1], machines ))
     # idziemy od końca
     i=tasks-1
     j=machines-1
-
+    correct=True
     while(True):
         if (j-1) < 0 and (i-1) <0 : # gdy przeszlimy po wszystkich maszynach to koniec
             break
 
-        if (i - 1) < 0: # gdy nie ma zadan to poruszamy sie po maszynie
-            j = j - 1
-        elif (j-1) < 0: # gdy nie ma maszyn to poruszamy sie po zadaniach
-            i = i - 1
-        else:
-            if Cmatrix[i][j-1] >= Cmatrix[i-1][j]: #porownujemy ktora operacja decyduje o wyborze sciezki
-                j = j - 1
+        if i == 0: # gdy nie ma zadan to poruszamy sie po maszynie
+            if Cmatrix[i][j-1]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+                j=j-1
             else:
-                i = i - 1
+                correct=False
+                break
+        elif j == 0:
+            if Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+                i=i-1
+            else:
+                correct=False
+                break
+        elif Cmatrix[i][j-1] == Cmatrix[i-1][j]:
+            if Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+                critical_path_copy=critical_path.copy()
+                critical_path_copy.append((schedule[i-1],j+1))
+                critical_paths,found=find_next_critical_path(schedule, time_matrix,critical_path_copy,Cmatrix,i-1,j)
+                if found==True:
+                    for k in range(0,len(critical_paths)):
+                        critical_path_list.append(critical_paths[k])
+                j=j-1
+            else:
+                correct=False
+                break
+        elif Cmatrix[i][j-1]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+            j=j-1
+        elif Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+            i=i-1
+        else:
+            correct=False
+            break
 
         critical_path.append((schedule[i], j+1)) # sciezka w formacie [ (zadanie, maszyna), (zadanie, maszyna) ... ]
 
-    critical_path.reverse()
+    if correct==True:
+        critical_path.reverse()
+        critical_path_list.append(critical_path)
 
-    return critical_path
+    return critical_path_list
 
+
+def find_next_critical_path(schedule, time_matrix,critical_path,Cmatrix,i,j):
+    critical_path_list=[]
+    correct=True
+    overall_correct=False
+    while(True):
+        if (j-1) < 0 and (i-1) <0 : # gdy przeszlimy po wszystkich maszynach to koniec
+            break
+
+        if i == 0: # gdy nie ma zadan to poruszamy sie po maszynie
+            if Cmatrix[i][j-1]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+                j=j-1
+            else:
+                correct=False
+                break
+        elif j == 0:
+            if Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+                i=i-1
+            else:
+                correct=False
+                break
+        elif Cmatrix[i][j-1] == Cmatrix[i-1][j]:
+            if Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+                critical_path_copy=critical_path.copy()
+                critical_path_copy.append((schedule[i-1],j+1))
+                critical_paths,found=find_next_critical_path(schedule, time_matrix,critical_path_copy,Cmatrix,i-1,j)
+                if found==True:
+                    overall_correct=True
+                    for k in range(0,len(critical_paths)):
+                        critical_path_list.append(critical_paths[k])
+                j=j-1
+            else:
+                correct=False
+                break
+        elif Cmatrix[i][j-1]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+            j=j-1
+        elif Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+            i=i-1
+        else:
+            correct=False
+            break
+
+        critical_path.append((schedule[i], j+1)) # sciezka w formacie [ (zadanie, maszyna), (zadanie, maszyna) ... ]
+
+    if correct==True:
+        critical_path.reverse()
+        critical_path_list.append(critical_path)
+        overall_correct=True
+    
+    return critical_path_list,overall_correct
+
+        
+
+    
 
 def print_critical_path(critical_path):
     print("Critical path")
@@ -70,7 +149,8 @@ def find_longest_on_critical_path(schedule,time_matrix):
     times_on_critical_path=[]
 
     for path in critical:
-        times_on_critical_path.append((path[0],time_matrix[path[0]-1][path[1]-1]))   # format (zadanie, czas zadania)
+        for i in range(0,len(path)):
+            times_on_critical_path.append((path[i][0],time_matrix[path[i][0]-1][path[i][1]-1]))   # format (zadanie, czas zadania)
 
     longest = max(times_on_critical_path, key=lambda item:item[1])[0] # wyciagamy najdluzsze zadanie (ze wzgledu na tuple jest lambda)
 
@@ -79,19 +159,36 @@ def find_longest_on_critical_path(schedule,time_matrix):
 
 def find_task_with_biggest_sum_of_operation_on_cirtical_path(schedule,time_matrix):
     critical = find_critical_path(schedule,time_matrix)
-    times_on_critical_path=[0] * max(schedule)
-    for i in range(0,len(critical)):
-        times_on_critical_path[critical[i][0]-1]+=time_matrix[critical[i][0]-1][critical[i][1]-1]
-    biggest = times_on_critical_path.index(max(times_on_critical_path))+1
+    for j in range(0,len(critical)):
+        times_on_critical_path=[0] * max(schedule)
+        for i in range(0,len(critical[j])):
+            times_on_critical_path[critical[j][i][0]-1]+=time_matrix[critical[j][i][0]-1][critical[j][i][1]-1]
+        if j==0:
+            max_time=max(times_on_critical_path)
+            biggest = times_on_critical_path.index(max_time)+1
+        else:
+            if max(times_on_critical_path)>max_time:
+                max_time=max(times_on_critical_path)
+                biggest = times_on_critical_path.index(max_time)+1
+
     return biggest
 
 
 def find_task_with_the_most_operations_on_critical_path(schedule,time_matrix):
     critical = find_critical_path(schedule,time_matrix)
-    tasks_on_critical_path=[]
-    for i in critical:
-        tasks_on_critical_path.append(i[0])
-    most=max(tasks_on_critical_path, key=tasks_on_critical_path.count)
+    for j in range(0,len(critical)):
+        tasks_on_critical_path=[]
+        for i in range(0,len(critical[j])):
+            tasks_on_critical_path.append(critical[j][i][0])
+        if j==0:
+            most=max(tasks_on_critical_path, key=tasks_on_critical_path.count)
+            max_count=tasks_on_critical_path.count(most)
+        else:
+            current_most=max(tasks_on_critical_path, key=tasks_on_critical_path.count)
+            if tasks_on_critical_path.count(current_most)>max_count:
+                most=current_most
+                max_count=tasks_on_critical_path.count(current_most)
+
     return most
 
 def find_task_which_make_Cmax_biggest(schedule,time_matrix):
