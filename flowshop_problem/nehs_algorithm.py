@@ -10,48 +10,53 @@ def find_critical_path(schedule, time_matrix):
     critical_path_list=[]
     critical_path.append((schedule[tasks-1], machines ))
     # idziemy od końca
-    i=tasks-1
-    j=machines-1
+    i = tasks-1 # zadanie do dodania na sciezce
+    j = machines-1 # maszyna do dodania na sciezce
     correct=True
     while(True):
         if (j-1) < 0 and (i-1) <0 : # gdy przeszlimy po wszystkich maszynach to koniec
             break
 
         if i == 0: # gdy nie ma zadan to poruszamy sie po maszynie
-            if Cmatrix[i][j-1]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
-                j=j-1
+            if Cmatrix[i][j-1] == (Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+                j = j-1
             else:
-                correct=False
+                correct = False
                 break
-        elif j == 0:
-            if Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
-                i=i-1
+
+        elif j == 0: # gdy nie ma maszyn to poruszamy sie po zadaniach
+            if Cmatrix[i-1][j] == (Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+                i = i-1
             else:
-                correct=False
+                correct = False
                 break
-        elif Cmatrix[i][j-1] == Cmatrix[i-1][j]:
-            if Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+
+        elif Cmatrix[i][j-1] == Cmatrix[i-1][j]: # gdy czas zakonczenia na poprzedniej maszynie i zadaniu
+            if Cmatrix[i-1][j] == (Cmatrix[i][j]-time_matrix[schedule[i]-1][j]): # oraz gdy na sciezce krytycznej
                 critical_path_copy=critical_path.copy()
                 critical_path_copy.append((schedule[i-1],j+1))
-                critical_paths,found=find_next_critical_path(schedule, time_matrix,critical_path_copy,Cmatrix,i-1,j)
-                if found==True:
-                    for k in range(0,len(critical_paths)):
+                critical_paths,found=find_next_critical_path(schedule, time_matrix,critical_path_copy,Cmatrix,i-1,j) # szukaj kolejnej ścieżki
+
+                if found:
+                    for k in range(0, len(critical_paths)):
                         critical_path_list.append(critical_paths[k])
-                j=j-1
+                j = j-1
             else:
-                correct=False
+                correct = False
                 break
-        elif Cmatrix[i][j-1]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
-            j=j-1
-        elif Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
-            i=i-1
+
+        elif Cmatrix[i][j-1] == (Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+            j = j-1
+
+        elif Cmatrix[i-1][j] == (Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+            i = i-1
         else:
-            correct=False
+            correct = False
             break
 
         critical_path.append((schedule[i], j+1)) # sciezka w formacie [ (zadanie, maszyna), (zadanie, maszyna) ... ]
 
-    if correct==True:
+    if correct:
         critical_path.reverse()
         critical_path_list.append(critical_path)
 
@@ -62,28 +67,30 @@ def find_next_critical_path(schedule, time_matrix,critical_path,Cmatrix,i,j):
     critical_path_list=[]
     correct=True
     overall_correct=False
+
     while(True):
         if (j-1) < 0 and (i-1) <0 : # gdy przeszlimy po wszystkich maszynach to koniec
             break
 
         if i == 0: # gdy nie ma zadan to poruszamy sie po maszynie
             if Cmatrix[i][j-1]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
-                j=j-1
+                j = j-1
             else:
-                correct=False
+                correct = False
                 break
         elif j == 0:
-            if Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
-                i=i-1
+            if Cmatrix[i-1][j] == (Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+                i = i-1
             else:
-                correct=False
+                correct = False
                 break
         elif Cmatrix[i][j-1] == Cmatrix[i-1][j]:
-            if Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+            if Cmatrix[i-1][j] == (Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
                 critical_path_copy=critical_path.copy()
                 critical_path_copy.append((schedule[i-1],j+1))
                 critical_paths,found=find_next_critical_path(schedule, time_matrix,critical_path_copy,Cmatrix,i-1,j)
-                if found==True:
+
+                if found == True:
                     overall_correct=True
                     for k in range(0,len(critical_paths)):
                         critical_path_list.append(critical_paths[k])
@@ -91,9 +98,9 @@ def find_next_critical_path(schedule, time_matrix,critical_path,Cmatrix,i,j):
             else:
                 correct=False
                 break
-        elif Cmatrix[i][j-1]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+        elif Cmatrix[i][j-1] == (Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
             j=j-1
-        elif Cmatrix[i-1][j]==(Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
+        elif Cmatrix[i-1][j] == (Cmatrix[i][j]-time_matrix[schedule[i]-1][j]):
             i=i-1
         else:
             correct=False
@@ -101,16 +108,13 @@ def find_next_critical_path(schedule, time_matrix,critical_path,Cmatrix,i,j):
 
         critical_path.append((schedule[i], j+1)) # sciezka w formacie [ (zadanie, maszyna), (zadanie, maszyna) ... ]
 
-    if correct==True:
+    if correct:
         critical_path.reverse()
         critical_path_list.append(critical_path)
-        overall_correct=True
+        overall_correct = True
     
     return critical_path_list,overall_correct
 
-        
-
-    
 
 def print_critical_path(critical_path):
     print("Critical path")
@@ -120,14 +124,14 @@ def print_critical_path(critical_path):
 
 def NEH_algorithm(tasks,machine,time_matrix):
     time_matrix=np.array(time_matrix)
-    w2=np.sum(time_matrix,axis=1).tolist()
+    w2=np.sum(time_matrix,axis=1).tolist() # wyznaczenie priorytetów
     w=[i * (-1) for i in w2]
-    sorted_order=np.argsort(w,kind='mergesort') + 1
-    schedule=[sorted_order[0]]
+    sorted_order=np.argsort(w,kind='mergesort') + 1 # stabilne sortowanie
+    schedule=[sorted_order[0]] # na poczatku na liscie jedno zadanie
     for i in range (1,tasks):
         best_in=0
         temp_schedule=schedule
-        for j in range(0,i+1):
+        for j in range(0,i+1): # wstawianie zadania na n pozycjach
             temp_schedule.insert(j,sorted_order[i])
             #print(temp_schedule)
             if j==0:
@@ -139,11 +143,11 @@ def NEH_algorithm(tasks,machine,time_matrix):
                     Cmax=Cmax_temp
             temp_schedule.pop(j)
 
-        schedule.insert(best_in,sorted_order[i])
+        schedule.insert(best_in,sorted_order[i]) # wstawiamy zadanie na najlepszej pozycji
     return schedule,Cmax
 
 
-def find_longest_on_critical_path(schedule,time_matrix):
+def find_longest_on_critical_path(schedule,time_matrix): # zadanie z najdluzsza operacja na sciezce
 
     critical = find_critical_path(schedule,time_matrix)
     times_on_critical_path=[]
@@ -241,7 +245,7 @@ def extend_neh_version_1(tasks,machine,time_matrix):
         Zaczynamy krok 5
         """
         longest_task = find_longest_on_critical_path(schedule,time_matrix)
-        if (longest_task==sorted_order[i]):
+        if (longest_task==sorted_order[i]): # jesli to to samo zadanie co przed chwila wstawialismy to lecimy dalej
             continue
         best_in=schedule.index(longest_task)
         schedule.remove(longest_task)
