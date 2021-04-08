@@ -1,9 +1,11 @@
 from Cmatrix_operations import *
 from nehs_algorithm import *
 from johnson_algorithm import *
+from tabu_search import *
 import pandas as pd
 import numpy as np
 from itertools import permutations
+import time
 
 
 def read_file_with_lots_of_datasets(file):
@@ -32,7 +34,7 @@ def read_data_set(file):
 
 
 def total_review(tasks,machines,time_matrix):
-    if tasks!=len(time_matrix):
+    if tasks != len(time_matrix):
         raise ValueError('Invalid tasks number')
     if machines!=len(time_matrix[0]):
         raise ValueError('Invalid machines number')
@@ -49,36 +51,54 @@ def total_review(tasks,machines,time_matrix):
             schedule_index=k
     return schedules[schedule_index],Cmax
 
+def find_critical_path_v2(schedule, time_matrix):
+    tasks=len(schedule)
+    machines=len(time_matrix[0])
+    Cmatrix = count_Cmatrix(schedule, time_matrix)
+    critical_path=[]
+    critical_path.append((schedule[tasks-1], machines ))
+    # idziemy od końca
+    i=tasks-1
+    j=machines-1
+    paths = 1
+    while(True):
+        if (j-1) < 0 and (i-1) <0 : # gdy przeszlimy po wszystkich maszynach to koniec
+            break
 
+        if (i - 1) < 0: # gdy nie ma zadan to poruszamy sie po maszynie
+            j = j - 1
+        elif (j-1) < 0: # gdy nie ma maszyn to poruszamy sie po zadaniach
+            i = i - 1
+        else:
+            if Cmatrix[i][j-1] > Cmatrix[i-1][j]: #porownujemy ktora operacja decyduje o wyborze sciezki
+                j = j - 1
+            elif Cmatrix[i][j-1] == Cmatrix[i-1][j]:
+                i = i - 1
+                
+            elif Cmatrix[i][j-1] < Cmatrix[i-1][j]:
+                i = i - 1
+
+        critical_path.append((schedule[i], j+1)) # sciezka w formacie [ (zadanie, maszyna), (zadanie, maszyna) ... ]
+
+    critical_path.reverse()
+
+    return critical_path
 
 def main():
     path=""
-    file_name="./datasets/" + "data011.txt"
+    file_name="./datasets/" + "data1.txt"
     number_of_datasets_to_read=1
+
 
     try:
         with open(path+file_name, "r") as file:
             for i in range(0,number_of_datasets_to_read):
 
-                tasks,machines,time_matrix=read_data_set(file)     
+                tasks,machines,time_matrix = read_data_set(file)
 
-                
-                schedule_from_func,Cmax=extend_neh_version_1(tasks,machines,time_matrix)
-                print(schedule_from_func,Cmax)
-                schedule_from_func,Cmax=extend_neh_version_2(tasks,machines,time_matrix)
-                print(schedule_from_func,Cmax)
-                schedule_from_func,Cmax=extend_neh_version_3(tasks,machines,time_matrix)
-                print(schedule_from_func,Cmax)
-                schedule_from_func,Cmax=extend_neh_version_4(tasks,machines,time_matrix)
-                print(schedule_from_func,Cmax)
-                schedule_from_func,Cmax=NEH_algorithm(tasks,machines,time_matrix)
-                print(schedule_from_func,Cmax)
+                schedule_from_func, Cmax = tabu_search(tasks, machines, time_matrix)
 
-                
-                #schedule_from_func,Cmax=total_review(tasks,machines,time_matrix)
-                #print(schedule_from_func,Cmax)
-
-
+                print(schedule_from_func,Cmax)
                 #draw_gantt(schedule_from_func,time_matrix)
 
     except FileNotFoundError:
