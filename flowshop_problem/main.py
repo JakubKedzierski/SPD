@@ -86,7 +86,7 @@ def find_critical_path_v2(schedule, time_matrix):
 
 def main():
     path=""
-    file_name="./datasets/" + "data1.txt"
+    file_name="./datasets/" + "data0.txt"
     number_of_datasets_to_read=1
 
 
@@ -97,8 +97,9 @@ def main():
                 tasks,machines,time_matrix = read_data_set(file)
 
                 schedule_from_func, Cmax = tabu_search(tasks, machines, time_matrix)
-
                 print(schedule_from_func,Cmax)
+                schedule_from_func, Cmax = NEH_algorithm(tasks, machines, time_matrix)
+                print(schedule_from_func, Cmax)
                 #draw_gantt(schedule_from_func,time_matrix)
 
     except FileNotFoundError:
