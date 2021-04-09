@@ -4,10 +4,12 @@ from johnson_algorithm import *
 import random
 
 def tabu_search(tasks,machines,time_matrix):
-    tabu_list_max_size = 20
+    tabu_list_max_size = 15
     max_iter = 100
+    neighbour_rand_number = 10
 
     # z randomowymi wartosciami na starcie dawalo czasy minimalnie lepsze od johnsona
+    # ze swapem po kolei typu 1-2, 2-3, 3-4, 4-5 dawalo slabe wyniki, random znacznie lepiej
 
     #schedule = [i for i in range(1, tasks+1)]
     #random.shuffle(schedule)
@@ -24,9 +26,14 @@ def tabu_search(tasks,machines,time_matrix):
         counter += 1
 
         neighbourhood = []
-        for i in range(0,len(current_schedule)-1):
+        for i in range(0, neighbour_rand_number):
             schedule = current_schedule.copy()
-            schedule[i], schedule[i+1] = schedule[i+1], schedule[i]
+            first = random.randint(0,len(schedule)-2)
+            second = random.randint(0, len(schedule) - 1)
+            if second == first:
+                second += 1
+
+            schedule[first], schedule[second] = schedule[second], schedule[first]
 
             is_on_banned_list = False
             for j in range(0,len(tabu_list)):
