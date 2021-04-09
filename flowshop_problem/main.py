@@ -96,8 +96,11 @@ def main():
 
                 tasks,machines,time_matrix = read_data_set(file)
 
+                start = time.time()
                 schedule_from_func, Cmax = tabu_search(tasks, machines, time_matrix)
-                print(schedule_from_func,Cmax)
+                end = time.time()
+                elapsed = end - start
+                print(schedule_from_func,Cmax,elapsed)
                 schedule_from_func, Cmax = NEH_algorithm(tasks, machines, time_matrix)
                 print(schedule_from_func, Cmax)
                 schedule_from_func, Cmax = johnson_for_N_machines(tasks, machines, time_matrix)
