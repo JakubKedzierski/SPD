@@ -1,11 +1,17 @@
 import numpy as np
 from Cmatrix_operations import *
+from johnson_algorithm import *
 import random
 
-def tabu_search(tasks,machine,time_matrix):
+def tabu_search(tasks,machines,time_matrix):
     tabu_list_max_size = 20
-    schedule = [i for i in range(1, tasks+1)]
-    random.shuffle(schedule)
+    max_iter = 100
+
+    # z randomowymi wartosciami na starcie dawalo czasy minimalnie lepsze od johnsona
+
+    #schedule = [i for i in range(1, tasks+1)]
+    #random.shuffle(schedule)
+    schedule,stuff = johnson_for_N_machines(tasks,machines,time_matrix)
 
     current_schedule = schedule
     best_schedule = schedule
@@ -13,7 +19,6 @@ def tabu_search(tasks,machine,time_matrix):
     tabu_list = []
     tabu_list.append(current_schedule)
     counter = 0
-    max_iter = 200
 
     while counter < max_iter:
         counter += 1
@@ -52,4 +57,4 @@ def tabu_search(tasks,machine,time_matrix):
             best_cmax = neighbour_best_cmax
             best_schedule = best_neighbour
 
-    return schedule,best_cmax
+    return best_schedule,best_cmax

@@ -100,6 +100,8 @@ def main():
                 print(schedule_from_func,Cmax)
                 schedule_from_func, Cmax = NEH_algorithm(tasks, machines, time_matrix)
                 print(schedule_from_func, Cmax)
+                schedule_from_func, Cmax = johnson_for_N_machines(tasks, machines, time_matrix)
+                print(schedule_from_func, Cmax)
                 #draw_gantt(schedule_from_func,time_matrix)
 
     except FileNotFoundError:
