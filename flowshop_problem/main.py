@@ -86,34 +86,44 @@ def find_critical_path_v2(schedule, time_matrix):
 
 def main():
     path=""
-    file_name="./datasets/" + "data0.txt"
-    number_of_datasets_to_read=1
-
+    file_name="./datasets/" + "data100_5"
+    number_of_datasets_to_read= 1
+    stats = np.zeros((2, 2))
 
     try:
-        with open(path+file_name, "r") as file:
-            for i in range(0,number_of_datasets_to_read):
-
-                tasks,machines,time_matrix = read_data_set(file)
+        with open(path + file_name, "r") as file:
+            for i in range(0, number_of_datasets_to_read):
+                tasks, machines, time_matrix, Cmax_good, schedule_good = read_file_with_lots_of_datasets(file)
 
                 start = time.time()
                 schedule_from_func, Cmax = tabu_search(tasks, machines, time_matrix)
                 end = time.time()
                 elapsed = end - start
-                print(schedule_from_func,Cmax,elapsed)
-                schedule_from_func, Cmax = NEH_algorithm(tasks, machines, time_matrix)
-                print(schedule_from_func, Cmax)
-                schedule_from_func, Cmax = johnson_for_N_machines(tasks, machines, time_matrix)
-                print(schedule_from_func, Cmax)
-                #draw_gantt(schedule_from_func,time_matrix)
+                stats[0][0] += Cmax
+                stats[0][1] += elapsed
+
+                start = time.time()
+                schedule_from_func, Cmax = extend_neh_version_4(tasks, machines, time_matrix)
+                end = time.time()
+                elapsed = end - start
+                stats[1][0] += Cmax
+                stats[1][1] += elapsed
+
 
     except FileNotFoundError:
         print("File not found.")
         raise FileNotFoundError
 
+    for i in range(0, len(stats)):
+        stats[i][0] = stats[i][0] / number_of_datasets_to_read
+        stats[i][1] = stats[i][1] / number_of_datasets_to_read
+
+    print(stats)
+
 
 if __name__ == '__main__':
     main()
+
 
 
 
