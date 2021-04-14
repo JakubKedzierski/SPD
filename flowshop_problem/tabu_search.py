@@ -6,7 +6,7 @@ import random
 import time
 
 def generate_random_neighbourhood(current_schedule, tabu_list): # zadana liczba wymian
-    neighbour_rand_number = 20
+    neighbour_rand_number = 30
 
     neighbourhood = []
     for i in range(0, neighbour_rand_number):
@@ -53,6 +53,8 @@ def generate_modyfied_random_neighbourhood(current_schedule, tabu_list): #kazde 
     return neighbourhood
 
 
+
+
 def tabu_search(tasks,machines,time_matrix):
     tabu_list_max_size = 15
     max_iter = 200
@@ -69,6 +71,12 @@ def tabu_search(tasks,machines,time_matrix):
     tabu_list.append(current_schedule)
     counter = 0
 
+    """
+    in_row_number = 0
+    in_row = False
+    while not in_row:
+    """
+
     #start = time.time()
     #end = time.time()
     #elapsed = end - start
@@ -78,7 +86,7 @@ def tabu_search(tasks,machines,time_matrix):
     while counter < max_iter:
         counter += 1
 
-        neighbourhood = generate_modyfied_random_neighbourhood(current_schedule, tabu_list)
+        neighbourhood = generate_random_neighbourhood(current_schedule, tabu_list)
 
         neighbour_best_cmax = count_cmax(neighbourhood[0], time_matrix)
         best_neighbour = neighbourhood[0]
@@ -100,6 +108,15 @@ def tabu_search(tasks,machines,time_matrix):
         if neighbour_best_cmax < best_cmax:
             best_cmax = neighbour_best_cmax
             best_schedule = best_neighbour
+            in_row_number = 0
+
+        """
+        else:
+            in_row_number = in_row_number + 1
+
+        if in_row_number > 50:
+            in_row = True
+        """
 
         #end = time.time()
         #elapsed = end - start

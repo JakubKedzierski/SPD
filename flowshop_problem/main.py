@@ -86,7 +86,7 @@ def find_critical_path_v2(schedule, time_matrix):
 
 def main():
     path=""
-    file_name="./datasets/" + "data100_5"
+    file_name="./datasets/" + "data50_10"
     number_of_datasets_to_read= 1
     stats = np.zeros((2, 2))
 
@@ -103,7 +103,7 @@ def main():
                 stats[0][1] += elapsed
 
                 start = time.time()
-                schedule_from_func, Cmax = extend_neh_version_4(tasks, machines, time_matrix)
+                schedule_from_func, Cmax = NEH_algorithm(tasks, machines, time_matrix)
                 end = time.time()
                 elapsed = end - start
                 stats[1][0] += Cmax
