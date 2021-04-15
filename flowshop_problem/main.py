@@ -86,8 +86,8 @@ def find_critical_path_v2(schedule, time_matrix):
 
 def main():
     path=""
-    file_name="./datasets/" + "data50_10"
-    number_of_datasets_to_read= 1
+    file_name="./datasets/" + "data20_20"
+    number_of_datasets_to_read= 10
     stats = np.zeros((2, 2))
 
     try:
@@ -95,19 +95,38 @@ def main():
             for i in range(0, number_of_datasets_to_read):
                 tasks, machines, time_matrix, Cmax_good, schedule_good = read_file_with_lots_of_datasets(file)
 
+                
                 start = time.time()
                 schedule_from_func, Cmax = tabu_search(tasks, machines, time_matrix)
                 end = time.time()
                 elapsed = end - start
                 stats[0][0] += Cmax
                 stats[0][1] += elapsed
-
+                
+                '''
+                start = time.time()
+                schedule_from_func, Cmax = tabu_search_FIN(tasks,machines,time_matrix)
+                end = time.time()
+                elapsed = end - start
+                stats[0][0] += Cmax
+                stats[0][1] += elapsed
+                '''
+                '''
+                start = time.time()
+                schedule_from_func, Cmax = tabu_search_with_all_neighbours(tasks, machines, time_matrix)
+                end = time.time()
+                elapsed = end - start
+                stats[0][0] += Cmax
+                stats[0][1] += elapsed
+                '''
+                
                 start = time.time()
                 schedule_from_func, Cmax = NEH_algorithm(tasks, machines, time_matrix)
                 end = time.time()
                 elapsed = end - start
                 stats[1][0] += Cmax
                 stats[1][1] += elapsed
+                
 
 
     except FileNotFoundError:
