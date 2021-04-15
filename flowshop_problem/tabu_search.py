@@ -195,7 +195,7 @@ def tabu_search(tasks,machines,time_matrix):
         current_schedule = best_neighbour
 
         if len(tabu_list) > tabu_list_max_size:
-            tabu_list.pop()
+            tabu_list.pop(0)
 
         tabu_list.append(current_schedule)
 
@@ -244,7 +244,6 @@ def generate_all_neighbourhood_swap_with_break(schedule,best_cmax,time_matrix,ta
             temp_schedule[i],temp_schedule[j]=temp_schedule[j],temp_schedule[i]
     
     return current_best_Cmax,current_best_schedule,found
-
 
 
 
