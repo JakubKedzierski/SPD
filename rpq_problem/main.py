@@ -19,7 +19,7 @@ def read_data_set(file):
 
 def main():
     path=""
-    file_name="./datasets/" + "in50.txt"
+    file_name="./datasets/" + "in200.txt"
 
     try:
         with open(path + file_name, "r") as file:
