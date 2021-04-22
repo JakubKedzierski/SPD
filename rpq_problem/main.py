@@ -1,15 +1,18 @@
+from schrage_algorithm import *
+import numpy as np
+
 def read_data_set(file):
     tasks, columns = [int(x) for x in next(file).split()]
 
-    r = []
-    p = []
-    q = []
+    r = np.zeros(tasks)
+    p = np.zeros(tasks)
+    q = np.zeros(tasks)
 
     for i in range(0, tasks):
         row = next(file).split()
-        r.append(int(row[0]))
-        p.append(int(row[1]))
-        q.append(int(row[2]))
+        r[i] = (int(row[0]))
+        p[i] = (int(row[1]))
+        q[i] = (int(row[2]))
 
     return tasks, r, p, q
 
@@ -17,11 +20,11 @@ def read_data_set(file):
 def main():
     path=""
     file_name="./datasets/" + "in50.txt"
-    number_of_datasets_to_read= 1
 
     try:
         with open(path + file_name, "r") as file:
             tasks, r, p, q = read_data_set(file)
+            basic_schrage_algorithm(tasks, r, p, q)
 
     except FileNotFoundError:
         print("File not found.")
