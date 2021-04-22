@@ -106,10 +106,10 @@ def generate_all_neighbourhood_swap(schedule):
     return neighbourhood
 
 
-def tabu_search_with_all_neighbours(tasks,machines,time_matrix):
+def tabu_search_with_all_neighbours(tasks, machines, time_matrix):
     tabu_list_max_size = 15
-    max_iter = 30
-    schedule, stuff = johnson_for_N_machines(tasks,machines,time_matrix)
+    max_iter = 20
+    schedule, stuff = johnson_for_N_machines(tasks, machines, time_matrix)
 
     current_schedule = schedule
     best_schedule = schedule
@@ -117,39 +117,52 @@ def tabu_search_with_all_neighbours(tasks,machines,time_matrix):
     tabu_list = []
     tabu_list.append(current_schedule)
 
-    for i in range(0,max_iter):
-        neighbourhood=generate_all_neighbourhood_insert(current_schedule)
-        #neighbourhood=generate_all_neighbourhood_swap(current_schedule)
-        current_best_Cmax=count_cmax(neighbourhood[0],time_matrix)
-        current_best_schedule=neighbourhood[0]
-        for j in range(1,len(neighbourhood)):
-            is_on_tabu_list=False
+    for i in range(0, max_iter):
+        # neighbourhood=generate_all_neighbourhood_insert(current_schedule)
+        neighbourhood = generate_all_neighbourhood_swap(current_schedule)
+        first = 0
+        while (first < len(neighbourhood)):
+            is_on_tabu_list = False
             for k in tabu_list:
-                if neighbourhood[j]==k:
-                    is_on_tabu_list=True
+                if neighbourhood[first] == k:
+                    is_on_tabu_list = True
                     break
-            if (is_on_tabu_list==False):
-                current_cmax=count_cmax(neighbourhood[j],time_matrix)
-                if (current_cmax<current_best_Cmax):
-                    current_best_Cmax=current_cmax
-                    current_best_schedule=neighbourhood[j]
-        
-        current_schedule=current_best_schedule
+            if is_on_tabu_list == False:
+                break
+            first = first + 1
+        if first == len(neighbourhood):
+            current_schedule = neighbourhood[0]
+            continue
+        current_best_Cmax = count_cmax(neighbourhood[first], time_matrix)
+        current_best_schedule = neighbourhood[first]
+        for j in range(first + 1, len(neighbourhood)):
+            is_on_tabu_list = False
+            for k in tabu_list:
+                if neighbourhood[j] == k:
+                    is_on_tabu_list = True
+                    break
+            if (is_on_tabu_list == False):
+                current_cmax = count_cmax(neighbourhood[j], time_matrix)
+                if (current_cmax < current_best_Cmax):
+                    current_best_Cmax = current_cmax
+                    current_best_schedule = neighbourhood[j]
+
+        current_schedule = current_best_schedule
         tabu_list.append(current_schedule)
-        if (len(tabu_list)>tabu_list_max_size):
+        if (len(tabu_list) > tabu_list_max_size):
             tabu_list.pop(0)
-        if (current_best_Cmax<best_cmax):
-            best_cmax=current_best_Cmax
-            best_schedule=current_schedule
-    
+        if (current_best_Cmax < best_cmax):
+            best_cmax = current_best_Cmax
+            best_schedule = current_schedule
+
     return best_schedule, best_cmax
 
 
 
 
 def tabu_search(tasks,machines,time_matrix):
-    tabu_list_max_size = 15
-    max_iter = 30
+    tabu_list_max_size = 20
+    max_iter = 100
 
     #schedule = [i for i in range(1, tasks+1)]
     #random.shuffle(schedule)
@@ -247,7 +260,7 @@ def generate_all_neighbourhood_swap_with_break(schedule,best_cmax,time_matrix,ta
 
 
 
-def tabu_search_FIN(tasks,machines,time_matrix):
+def tabu_search_FIN(tasks,machines,time_matrix): # pierwszy sasiad polepszajacy
     tabu_list_max_size = 15
     max_iter = 50
     schedule, stuff = johnson_for_N_machines(tasks,machines,time_matrix)
