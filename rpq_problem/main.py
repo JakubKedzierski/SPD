@@ -24,7 +24,8 @@ def main():
     try:
         with open(path + file_name, "r") as file:
             tasks, r, p, q = read_data_set(file)
-            basic_schrage_algorithm(tasks, r, p, q)
+            schedule,Cmax = basic_schrage_algorithm(tasks, r, p, q)
+            print(Cmax)
 
     except FileNotFoundError:
         print("File not found.")
