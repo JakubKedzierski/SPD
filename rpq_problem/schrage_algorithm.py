@@ -1,5 +1,6 @@
 import random
 import numpy as np
+from piority_queue import *
 
 def basic_schrage_algorithm(tasks, r, p, q):
 
@@ -83,4 +84,32 @@ def pmtn_schrage_algorithm(tasks, r, p, q):
             ready_list = np.delete(ready_list, j, axis=0)
             t=t+p_j
             Cmax = max(Cmax, t +q_j)
+    return Cmax
+
+
+def pmtn_schrage_algorithm_priority_queue(tasks, r, p, q):
+
+    ready_queue=PriorityQueue(True)
+    not_ready_queue=PriorityQueue(False)
+    for i in range(0,tasks):
+        not_ready_queue.insert(Node(r[i],p[i],q[i]))
+    t = 0
+    Cmax = 0
+    node2=Node(0,0,np.iinfo(np.int32).max)
+    #print(not_ready_list)
+    while not ready_queue.isEmpty() or not not_ready_queue.isEmpty():
+        while not not_ready_queue.isEmpty() and not_ready_queue.queue[0].r <= t:
+            node=not_ready_queue.pop()
+            ready_queue.insert(node)
+            if node.q>node2.q:
+                node2.p=t-node.r
+                t=node.r
+                if node2.p>0:
+                    ready_queue.insert(node2)
+        if ready_queue.isEmpty():
+            t = not_ready_queue.queue[0].r
+        else:
+            node2=ready_queue.pop()
+            t=t+node2.p
+            Cmax = max(Cmax, t + node2.q)
     return Cmax

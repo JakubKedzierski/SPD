@@ -1,5 +1,7 @@
 from schrage_algorithm import *
 import numpy as np
+from piority_queue import *
+import time
 
 def read_data_set(file):
     tasks, columns = [int(x) for x in next(file).split()]
@@ -26,8 +28,17 @@ def main():
             tasks, r, p, q = read_data_set(file)
             schedule,Cmax = basic_schrage_algorithm(tasks, r, p, q)
             print(Cmax)
+            start=time.time()
             Cmax2=pmtn_schrage_algorithm(tasks,r,p,q)
+            end=time.time()
+            print(end-start)
             print(Cmax2)
+            start=time.time()
+            Cmax3=pmtn_schrage_algorithm_priority_queue(tasks,r,p,q)
+            end=time.time()
+            print(end-start)
+            print(Cmax3)
+
 
     except FileNotFoundError:
         print("File not found.")
