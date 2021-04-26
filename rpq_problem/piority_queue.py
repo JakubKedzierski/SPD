@@ -17,13 +17,13 @@ class PriorityQueue:
     def insert(self,node:Node):
         if (self.ismax):
             index=len(self.queue)
-            for i in range(0,len(self.queue)):
+            for i in range(0,len(self.queue)): # uszeregowanie po q
                 if node.q>self.queue[i].q:
                     index=i
                     break
         else:
             index=len(self.queue)
-            for i in range(0,len(self.queue)):
+            for i in range(0,len(self.queue)): # uszeregowanie po r
                 if node.r<self.queue[i].r:
                     index=i
                     break

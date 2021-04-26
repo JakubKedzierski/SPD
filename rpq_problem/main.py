@@ -21,23 +21,39 @@ def read_data_set(file):
 
 def main():
     path=""
-    file_name="./datasets/" + "data008.txt"
+    file_name="./datasets/" + "in200.txt"
 
     try:
         with open(path + file_name, "r") as file:
+
+            start = time.time()
             tasks, r, p, q = read_data_set(file)
             schedule,Cmax = basic_schrage_algorithm(tasks, r, p, q)
+            end = time.time()
+            print("basic schrage")
             print(Cmax)
+            print(end - start)
+
+            start = time.time()
+            Cmax = basic_schrage_algorithm_priority_queue(tasks, r, p, q)
+            end = time.time()
+            print("basic schrage priority")
+            print(Cmax)
+            print(end - start)
+
             start=time.time()
-            Cmax2=pmtn_schrage_algorithm(tasks,r,p,q)
+            Cmax=pmtn_schrage_algorithm(tasks,r,p,q)
             end=time.time()
+            print("pmtn schrage")
+            print(Cmax)
             print(end-start)
-            print(Cmax2)
+
             start=time.time()
-            Cmax3=pmtn_schrage_algorithm_priority_queue(tasks,r,p,q)
+            Cmax=pmtn_schrage_algorithm_priority_queue(tasks,r,p,q)
             end=time.time()
+            print("pmtn schrage priority")
+            print(Cmax)
             print(end-start)
-            print(Cmax3)
 
 
     except FileNotFoundError:
