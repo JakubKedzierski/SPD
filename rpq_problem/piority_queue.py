@@ -1,9 +1,9 @@
 class Node:
-    def __init__(self,r,p,q):
+    def __init__(self,r,p,q,task):
         self.r=r
         self.p=p
         self.q=q
-    
+        self.task = task
 
 
 class PriorityQueue:

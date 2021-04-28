@@ -35,7 +35,7 @@ def main():
             print(end - start)
 
             start = time.time()
-            Cmax = basic_schrage_algorithm_priority_queue(tasks, r, p, q)
+            schedule, Cmax = basic_schrage_algorithm_priority_queue(tasks, r, p, q)
             end = time.time()
             print("basic schrage priority")
             print(Cmax)

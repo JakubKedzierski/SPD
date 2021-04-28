@@ -46,10 +46,11 @@ def basic_schrage_algorithm_priority_queue(tasks, r, p, q):
     ready_queue=PriorityQueue(True)  # szeregowanie po q (pop -> max q)
     not_ready_queue=PriorityQueue(False) # szeregowanie po r (pop -> min r)
     for i in range(0,tasks):
-        not_ready_queue.insert(Node(r[i],p[i],q[i]))
+        not_ready_queue.insert(Node(r[i],p[i],q[i],i+1))
     t = not_ready_queue.queue[0].r
     Cmax = 0
-
+    schedule = np.zeros(tasks)
+    i = 0
     while not ready_queue.isEmpty() or not not_ready_queue.isEmpty():
         while not not_ready_queue.isEmpty() and not_ready_queue.queue[0].r <= t:
             node=not_ready_queue.pop() # wyjmujemy z not ready i to od razu jest min
@@ -61,8 +62,10 @@ def basic_schrage_algorithm_priority_queue(tasks, r, p, q):
             node=ready_queue.pop()
             t=t+node.p
             Cmax = max(Cmax, t + node.q)
+            schedule[i] = node.task
+            i = i+1
 
-    return Cmax
+    return schedule,Cmax
 
 
 def pmtn_schrage_algorithm(tasks, r, p, q):
@@ -115,10 +118,10 @@ def pmtn_schrage_algorithm_priority_queue(tasks, r, p, q):
     ready_queue=PriorityQueue(True)
     not_ready_queue=PriorityQueue(False)
     for i in range(0,tasks):
-        not_ready_queue.insert(Node(r[i],p[i],q[i]))
+        not_ready_queue.insert(Node(r[i],p[i],q[i],i+1))
     t = 0
     Cmax = 0
-    node2=Node(0,0,np.iinfo(np.int32).max)
+    node2=Node(0,0,np.iinfo(np.int32).max,0)
     #print(not_ready_list)
     while not ready_queue.isEmpty() or not not_ready_queue.isEmpty():
         while not not_ready_queue.isEmpty() and not_ready_queue.queue[0].r <= t:
