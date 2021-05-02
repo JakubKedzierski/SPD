@@ -81,7 +81,7 @@ def main():
 
 
 def testing_main():
-    sets = [50,100,150,200,250,300,400,500,1000,2000,3000]
+    sets = [200,300,400,500,600,700]
     repeat = 5
 
     for numb in sets:
@@ -97,17 +97,18 @@ def testing_main():
             q = np.zeros(numb, dtype=int)
             for j in range(0,numb):
                 r[j] = random.randint(10, 1500)
-                p[j] = random.randint(5, 50)
+                p[j] = random.randint(5, 100)
                 q[j] = random.randint(10, 1500)
 
             start = time.time()
+            schedule, Cmax = (0,0)
             schedule, Cmax = basic_schrage_algorithm(numb, r, p, q)
             end = time.time()
             time_b = time_b + (end - start)
             cmax_b = cmax_b + Cmax
 
             start = time.time()
-            schedule, Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
+            Cmax = pmtn_schrage_algorithm(numb, r, p, q)
             end = time.time()
             time_p = time_p + (end - start)
             cmax_p = cmax_p + Cmax
@@ -118,9 +119,8 @@ def testing_main():
         time_p = time_p/repeat
         cmax_p = cmax_p/repeat
 
-        print(numb)
-        print('basic:',cmax_b,time_b)
-        print('priority:', cmax_p, time_p)
+        print(numb,cmax_b,time_b)
+        print(numb, cmax_p, time_p)
 
 
 
