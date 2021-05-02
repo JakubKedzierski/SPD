@@ -78,7 +78,7 @@ def pmtn_schrage_algorithm(tasks, r, p, q):
     t = 0
     l = 0
     Cmax = 0
-    #print(not_ready_list)
+    q_l=np.iinfo(np.int32).max
     while not len(ready_list) == 0 or not len(not_ready_list) == 0:
         while not len(not_ready_list) == 0 and np.min(not_ready_list[:, 1]) <= t:
             j = np.argmin(not_ready_list[:, 1])
@@ -90,26 +90,25 @@ def pmtn_schrage_algorithm(tasks, r, p, q):
                 ready_list[0, 1] = not_ready_list[j,1]
                 ready_list[0, 2] = not_ready_list[j,2]
                 ready_list[0, 3] = not_ready_list[j,3]
-
             q_j=not_ready_list[j,3]
             r_j=not_ready_list[j,1]
             not_ready_list = np.delete(not_ready_list, j, axis= 0)
-            if l!=0:
-                if q_j>q[l]:
-                    p_l=t-r_j
-                    t=r_j
-                    if p[l]>0:
-                        ready_list = np.vstack((ready_list, [l+1,r[l],p_l,q[l]]))
+            if q_j>q_l:
+                p_l=t-r_j
+                t=r_j
+                if p_l>0:
+                    ready_list = np.vstack((ready_list, [t_l,r_l,p_l,q_l]))
         if len(ready_list) == 0:
             t = np.min(not_ready_list[:, 1])
         else:
-            j = np.argmax(ready_list[:, 3])
-            p_j = ready_list[j, 2]
-            q_j = ready_list[j, 3]
-            l=ready_list[j,0]-1
-            ready_list = np.delete(ready_list, j, axis=0)
-            t=t+p_j
-            Cmax = max(Cmax, t +q_j)
+            l = np.argmax(ready_list[:, 3])
+            p_l = ready_list[l, 2]
+            q_l = ready_list[l, 3]
+            r_l = ready_list[l, 1]
+            t_l = ready_list[l, 0]
+            t=t+p_l
+            Cmax = max(Cmax, t +q_l)
+            ready_list = np.delete(ready_list, l, axis=0)
     return Cmax
 
 
@@ -122,7 +121,6 @@ def pmtn_schrage_algorithm_priority_queue(tasks, r, p, q):
     t = 0
     Cmax = 0
     node2=Node(0,0,np.iinfo(np.int32).max,0)
-    #print(not_ready_list)
     while not ready_queue.isEmpty() or not not_ready_queue.isEmpty():
         while not not_ready_queue.isEmpty() and not_ready_queue.queue[0].r <= t:
             node=not_ready_queue.pop()
@@ -131,7 +129,7 @@ def pmtn_schrage_algorithm_priority_queue(tasks, r, p, q):
                 node2.p=t-node.r
                 t=node.r
                 if node2.p>0:
-                    ready_queue.insert(node2)
+                    ready_queue.insert(Node(node2.r,node2.p,node2.q,node2.task))
         if ready_queue.isEmpty():
             t = not_ready_queue.queue[0].r
         else:
