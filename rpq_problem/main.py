@@ -3,6 +3,7 @@ import numpy as np
 from piority_queue import *
 import time
 import random
+from heap import *
 
 def read_data_set(file):
     tasks, columns = [int(x) for x in next(file).split()]
@@ -40,13 +41,38 @@ def compute_testing_set(file):
 
 def main():
     path=""
-    file_name="./datasets/" + "in200.txt"
+    file_name="./datasets/" + "in50.txt"
 
     try:
         with open(path + file_name, "r") as file:
 
             tasks, r, p, q = read_data_set(file)
-            
+            not_ready_list = [task for task in range(1, tasks + 1)]
+            not_ready_list = np.array((not_ready_list, r, p, q))
+            not_ready_list = np.transpose(not_ready_list)
+
+            # tworzenie heap max, pop zwraca max q
+            heap = MaxHeap()
+            heap.tab = not_ready_list
+            heap.heap_size = tasks
+            heap.build_heap_max_q_in_node(heap.heap_size)
+            ####
+
+            # tworzenie heap min, pop zwraca min r, dodawanie elementów normalnie poprzez insert
+            heap2 = MinHeap()
+            ####
+
+            while(heap.heap_size >0):
+                row = heap.pop_max()
+                heap2.insert_min_heap(row)
+
+            while (heap2.heap_size > 0):
+                print(heap2.pop_min())
+
+
+
+
+            """
             start = time.time()
             schedule,Cmax = basic_schrage_algorithm(tasks, r, p, q)
             end = time.time()
@@ -74,7 +100,7 @@ def main():
             print("pmtn schrage priority")
             print(Cmax)
             print(end-start)
-
+            """
 
     except FileNotFoundError:
         print("File not found.")
@@ -82,7 +108,7 @@ def main():
 
 
 def testing_main():
-    #sets = [50,100,150,200,250,300,400,500,1000,2000]
+    sets = [50,100,150,200,250,300,400,500,1000,2000]
     repeat = 5
 
     for numb in sets:
@@ -130,10 +156,7 @@ def testing_main():
             end = time.time()
             time_pp = time_pp + (end - start)
             cmax_pp = cmax_pp + Cmax
-            
-            
 
-            
 
         time_b = time_b/repeat
         cmax_b = cmax_b/repeat
