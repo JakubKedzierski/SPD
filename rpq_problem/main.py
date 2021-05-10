@@ -82,7 +82,8 @@ def main():
 
             start = time.time()
             #schedule, Cmax = basic_schrage_algorithm_priority_queue(tasks, r, p, q)
-            schedule,Cmax = basic_schrage_algorithm_heap(tasks, r, p, q)
+            #schedule,Cmax = basic_schrage_algorithm_heap(tasks, r, p, q)
+            schedule,Cmax = basic_schrage_algorithm2(tasks, r, p, q)
             end = time.time()
             print("basic schrage priority")
             print(Cmax)
@@ -99,7 +100,8 @@ def main():
 
             start=time.time()
             #Cmax=pmtn_schrage_algorithm_priority_queue(tasks,r,p,q)
-            Cmax = pmtn_schrage_algorithm_heap(tasks, r, p, q)
+            #Cmax = pmtn_schrage_algorithm_heap(tasks, r, p, q)
+            Cmax = pmtn_schrage_algorithm2(tasks, r, p, q)
             end=time.time()
             print("pmtn schrage priority")
             print(Cmax)
@@ -112,7 +114,7 @@ def main():
 
 
 def testing_main():
-    sets = [50,100,150,200,250,300,400,500,1000,2000]
+    sets = [50,100,150,200,250,300,400,500]
     repeat = 5
 
     for numb in sets:
@@ -127,6 +129,18 @@ def testing_main():
 
         time_pp = 0
         cmax_pp = 0
+
+        time_b2 = 0
+        cmax_b2 = 0
+
+        time_p2 = 0
+        cmax_p2 = 0
+
+        time_ph = 0
+        cmax_ph = 0
+
+        time_bh = 0
+        cmax_bh = 0
 
         for i in range(0, repeat):
    
@@ -146,22 +160,58 @@ def testing_main():
             cmax_b = cmax_b + Cmax
 
             start = time.time()
-            #schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
-            schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
+            schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
+            #schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
+            #schedule,Cmax = basic_schrage_algorithm2(numb, r, p, q)
             end = time.time()
             time_bp = time_bp + (end - start)
             cmax_bp = cmax_bp + Cmax
+
+            start = time.time()
+            #schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
+            schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
+            #schedule,Cmax = basic_schrage_algorithm2(numb, r, p, q)
+            end = time.time()
+            time_bh = time_bh + (end - start)
+            cmax_bh = cmax_bh + Cmax
+
+            start = time.time()
+            #schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
+            #schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
+            schedule,Cmax = basic_schrage_algorithm2(numb, r, p, q)
+            end = time.time()
+            time_b2 = time_b2 + (end - start)
+            cmax_b2 = cmax_b2 + Cmax
+
             start = time.time()
             Cmax = pmtn_schrage_algorithm(numb, r, p, q)
             end = time.time()
             time_p = time_p + (end - start)
             cmax_p = cmax_p + Cmax
 
-            #Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
-            Cmax = pmtn_schrage_algorithm_heap(numb, r, p, q)
+            start = time.time()
+            Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
+            #Cmax = pmtn_schrage_algorithm_heap(numb, r, p, q)
+            #Cmax = pmtn_schrage_algorithm2(numb, r, p, q)
             end = time.time()
             time_pp = time_pp + (end - start)
             cmax_pp = cmax_pp + Cmax
+
+            start = time.time()
+            #Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
+            Cmax = pmtn_schrage_algorithm_heap(numb, r, p, q)
+            #Cmax = pmtn_schrage_algorithm2(numb, r, p, q)
+            end = time.time()
+            time_ph = time_ph + (end - start)
+            cmax_ph = cmax_ph + Cmax
+
+            start = time.time()
+            #Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
+            #Cmax = pmtn_schrage_algorithm_heap(numb, r, p, q)
+            Cmax = pmtn_schrage_algorithm2(numb, r, p, q)
+            end = time.time()
+            time_p2 = time_p2 + (end - start)
+            cmax_p2 = cmax_p2 + Cmax
 
 
         time_b = time_b/repeat
@@ -173,13 +223,37 @@ def testing_main():
         time_bp = time_bp/repeat
         cmax_bp = cmax_bp/repeat
 
+        time_p2 = time_p2/repeat
+        cmax_p2 = cmax_p2/repeat
+
+        time_b2 = time_b2/repeat
+        cmax_b2 = cmax_b2/repeat
+
         time_pp = time_pp/repeat
         cmax_pp = cmax_pp/repeat
 
+        time_ph = time_ph/repeat
+        cmax_ph = cmax_ph/repeat
+
+        time_bh = time_bh/repeat
+        cmax_bh = cmax_bh/repeat
+
+        print("Pierwotny basic:")
         print(numb,cmax_b,time_b)
+        print("Priority basic:")
         print(numb,cmax_bp,time_bp)
+        print("Podstawowa lista basic:")
+        print(numb,cmax_b2,time_b2)
+        print("Heap basic:")
+        print(numb,cmax_bh,time_bh)
+        print("Pierwotny pmtn:")
         print(numb, cmax_p, time_p)
+        print("Priority pmtn:")
         print(numb, cmax_pp, time_pp)
+        print("Podstawowa lista pmtn:")
+        print(numb, cmax_p2, time_p2)
+        print("Heap pmtn:")
+        print(numb, cmax_ph, time_ph)
 
 
 

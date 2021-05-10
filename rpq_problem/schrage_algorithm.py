@@ -213,3 +213,72 @@ def pmtn_schrage_algorithm_heap(tasks, r, p, q):
             t=t+node2[2]
             Cmax = max(Cmax, t + node2[3])
     return Cmax
+
+
+def basic_schrage_algorithm2(tasks, r, p, q):
+
+    schedule = np.zeros(tasks)
+    ready_list = []
+    not_ready_list = []
+    for i in range(0,tasks):
+        not_ready_list.append([i+1,r[i],p[i],q[i]])
+    t = min(x[1] for x in not_ready_list)
+    i = 0
+    Cmax = 0
+    while not len(ready_list) == 0 or not len(not_ready_list) == 0:
+        while not len(not_ready_list) == 0 and min(x[1] for x in not_ready_list) <= t:
+            j = not_ready_list.pop(not_ready_list.index(min(not_ready_list, key=lambda x:x[1])))
+            #print("N")
+            #print(j)
+            ready_list.append(j.copy())
+
+        if len(ready_list) == 0:
+            t = min(x[1] for x in not_ready_list)
+        else:
+            j = ready_list.pop(ready_list.index(max(ready_list, key=lambda x:x[3])))
+            #print("R")
+            #print(j)
+            #print([ready_list[j,0],ready_list[j,1],ready_list[j,2],ready_list[j,3]])
+            task = j[0]
+            p_j = j[2]
+            q_j = j[3]
+            schedule[i] = task
+            i = i+1
+            t = t+p_j
+            Cmax = max(Cmax, t +q_j)
+    return schedule,Cmax
+    
+
+def pmtn_schrage_algorithm2(tasks, r, p, q):
+
+    ready_list = []
+    #q_0=np.iinfo(np.int32).max
+    ready_list = []
+    not_ready_list = []
+    for i in range(0,tasks):
+        not_ready_list.append([i+1,r[i],p[i],q[i]])
+    t = 0
+    l = 0
+    Cmax = 0
+    q_l=np.iinfo(np.int32).max
+    while not len(ready_list) == 0 or not len(not_ready_list) == 0:
+        while not len(not_ready_list) == 0 and min(x[1] for x in not_ready_list) <= t:
+            j = not_ready_list.pop(not_ready_list.index(min(not_ready_list, key=lambda x:x[1])))
+            ready_list.append(j.copy())
+            if j[3]>q_l:
+                p_l=t-j[1]
+                t=j[1]
+                if p_l>0:
+                    ready_list.append([t_l,r_l,p_l,q_l])
+        if len(ready_list) == 0:
+            t = min(x[1] for x in not_ready_list)
+        else:
+            l = ready_list.pop(ready_list.index(max(ready_list, key=lambda x:x[3])))
+            p_l = l[2]
+            q_l = l[3]
+            r_l = l[1]
+            t_l = l[0]
+            t=t+p_l
+            Cmax = max(Cmax, t +q_l)
+    return Cmax
+
