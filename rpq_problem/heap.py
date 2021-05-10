@@ -129,16 +129,19 @@ class MinHeap():
 
     def pop_min(self):
         if self.heap_size <= 0:
-            return np.iinfo(np.int32).max
+            return np.iinfo(np.int32).min
 
         if self.heap_size == 1:
-            self.heap_size = self.heap_size - 1
-            return self.tab[0]
+            self.heap_size =self.heap_size-1
+            root=np.copy(self.tab[0])
+            self.tab=np.delete(self.tab,0,axis=0)
+            return root
 
         root = np.copy(self.tab[0])
         self.tab[0] = np.copy(self.tab[self.heap_size - 1])
-        self.heap_size = self.heap_size - 1
-        self.heapify_min_r_in_node(self.heap_size, 0)
+        self.tab=np.delete(self.tab,self.heap_size-1,axis=0)
+        self.heap_size = self.heap_size-1
+        self.heapify_min_r_in_node(self.heap_size,0)
         return root
 
 
