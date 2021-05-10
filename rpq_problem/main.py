@@ -41,7 +41,7 @@ def compute_testing_set(file):
 
 def main():
     path=""
-    file_name="./datasets/" + "in50.txt"
+    file_name="./datasets/" + "in200.txt"
 
     try:
         with open(path + file_name, "r") as file:
@@ -50,29 +50,29 @@ def main():
             not_ready_list = [task for task in range(1, tasks + 1)]
             not_ready_list = np.array((not_ready_list, r, p, q))
             not_ready_list = np.transpose(not_ready_list)
-
+            """
             # tworzenie heap max, pop zwraca max q
-            heap = MaxHeap()
+            heap = MinHeap()
             heap.tab = not_ready_list
             heap.heap_size = tasks
-            heap.build_heap_max_q_in_node(heap.heap_size)
+            heap.build_heap_min_r_in_node(heap.heap_size)
             ####
 
             # tworzenie heap min, pop zwraca min r, dodawanie elementów normalnie poprzez insert
-            heap2 = MinHeap()
+            heap2 = MaxHeap()
             ####
-
             while(heap.heap_size >0):
-                row = heap.pop_max()
-                heap2.insert_min_heap(row)
+                row = heap.pop_min()
+                print(row)
+                heap2.insert_max_heap(row)
 
+            print("==================")
             while (heap2.heap_size > 0):
-                print(heap2.pop_min())
-
-
-
+                print(heap2.pop_max())
 
             """
+
+            
             start = time.time()
             schedule,Cmax = basic_schrage_algorithm(tasks, r, p, q)
             end = time.time()
@@ -81,7 +81,8 @@ def main():
             print(end - start)
 
             start = time.time()
-            schedule, Cmax = basic_schrage_algorithm_priority_queue(tasks, r, p, q)
+            #schedule, Cmax = basic_schrage_algorithm_priority_queue(tasks, r, p, q)
+            schedule,Cmax = basic_schrage_algorithm_heap(tasks, r, p, q)
             end = time.time()
             print("basic schrage priority")
             print(Cmax)
@@ -94,14 +95,17 @@ def main():
             print(Cmax)
             print(end-start)
 
+            
+
             start=time.time()
-            Cmax=pmtn_schrage_algorithm_priority_queue(tasks,r,p,q)
+            #Cmax=pmtn_schrage_algorithm_priority_queue(tasks,r,p,q)
+            Cmax = pmtn_schrage_algorithm_heap(tasks, r, p, q)
             end=time.time()
             print("pmtn schrage priority")
             print(Cmax)
             print(end-start)
-            """
-
+            
+            
     except FileNotFoundError:
         print("File not found.")
         raise FileNotFoundError
@@ -142,7 +146,8 @@ def testing_main():
             cmax_b = cmax_b + Cmax
 
             start = time.time()
-            schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
+            #schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
+            schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
             end = time.time()
             time_bp = time_bp + (end - start)
             cmax_bp = cmax_bp + Cmax
@@ -152,7 +157,8 @@ def testing_main():
             time_p = time_p + (end - start)
             cmax_p = cmax_p + Cmax
 
-            Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
+            #Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
+            Cmax = pmtn_schrage_algorithm_heap(numb, r, p, q)
             end = time.time()
             time_pp = time_pp + (end - start)
             cmax_pp = cmax_pp + Cmax
@@ -178,4 +184,4 @@ def testing_main():
 
 
 if __name__ == '__main__':
-    main()
+    testing_main()

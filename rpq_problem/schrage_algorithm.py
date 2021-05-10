@@ -1,6 +1,7 @@
 import random
 import numpy as np
 from piority_queue import *
+from heap import *
 
 def basic_schrage_algorithm(tasks, r, p, q):
 
@@ -24,12 +25,15 @@ def basic_schrage_algorithm(tasks, r, p, q):
                 ready_list[0, 2] = not_ready_list[j,2]
                 ready_list[0, 3] = not_ready_list[j,3]
 
+            #print(ready_list)
+            #print([not_ready_list[j,0],not_ready_list[j,1],not_ready_list[j,2],not_ready_list[j,3]])
             not_ready_list = np.delete(not_ready_list, j, axis= 0)
 
         if len(ready_list) == 0:
             t = np.min(not_ready_list[:, 1])
         else:
             j = np.argmax(ready_list[:, 3])
+            #print([ready_list[j,0],ready_list[j,1],ready_list[j,2],ready_list[j,3]])
             task = ready_list[j, 0]
             p_j = ready_list[j, 2]
             q_j = ready_list[j, 3]
@@ -63,6 +67,43 @@ def basic_schrage_algorithm_priority_queue(tasks, r, p, q):
             t=t+node.p
             Cmax = max(Cmax, t + node.q)
             schedule[i] = node.task
+            i = i+1
+
+    return schedule,Cmax
+
+
+def basic_schrage_algorithm_heap(tasks, r, p, q):
+
+
+    not_ready_list = [task for task in range(1, tasks + 1)]
+    not_ready_list = np.array((not_ready_list, r, p, q))
+    not_ready_list = np.transpose(not_ready_list)
+
+    not_ready_heap = MinHeap()
+    not_ready_heap.tab = not_ready_list
+    not_ready_heap.heap_size = tasks
+    not_ready_heap.build_heap_min_r_in_node(not_ready_heap.heap_size)
+
+    ready_heap = MaxHeap()
+
+    t = not_ready_heap.tab[0][1]
+    Cmax = 0
+    schedule = np.zeros(tasks)
+    i = 0
+    while not ready_heap.isEmpty() or not not_ready_heap.isEmpty():
+        while not not_ready_heap.isEmpty() and not_ready_heap.tab[0][1] <= t:
+            node=not_ready_heap.pop_min() # wyjmujemy z not ready i to od razu jest min
+            ready_heap.insert_max_heap(node) # wstawiamy do ready
+            #print(ready_heap.tab)
+            #print(node)
+        if ready_heap.isEmpty():
+            t = not_ready_heap.tab[0][1]
+        else:
+            node=ready_heap.pop_max()
+            #print(node)
+            t=t+node[2]
+            Cmax = max(Cmax, t + node[3])
+            schedule[i] = node[0]
             i = i+1
 
     return schedule,Cmax
@@ -136,4 +177,39 @@ def pmtn_schrage_algorithm_priority_queue(tasks, r, p, q):
             node2=ready_queue.pop()
             t=t+node2.p
             Cmax = max(Cmax, t + node2.q)
+    return Cmax
+
+
+
+def pmtn_schrage_algorithm_heap(tasks, r, p, q):
+
+    not_ready_list = [task for task in range(1, tasks + 1)]
+    not_ready_list = np.array((not_ready_list, r, p, q))
+    not_ready_list = np.transpose(not_ready_list)
+
+    not_ready_heap = MinHeap()
+    not_ready_heap.tab = not_ready_list
+    not_ready_heap.heap_size = tasks
+    not_ready_heap.build_heap_min_r_in_node(not_ready_heap.heap_size)
+
+    ready_heap = MaxHeap()
+    t = 0
+    Cmax = 0
+    node2=[0,0,np.iinfo(np.int32).max,0]
+    while not ready_heap.isEmpty() or not not_ready_heap.isEmpty():
+        while not not_ready_heap.isEmpty() and not_ready_heap.tab[0][1] <= t:
+            node=not_ready_heap.pop_min() # wyjmujemy z not ready i to od razu jest min
+            ready_heap.insert_max_heap(node) # wstawiamy do ready
+            if node[3]>node2[3]:
+                node2[2]=t-node[1]
+                t=node[1]
+                if node2[2]>0:
+                    ready_heap.insert_max_heap([node2[0],node2[1],node2[2],node2[3]])
+        if ready_heap.isEmpty():
+            t = not_ready_heap.tab[0][1]
+        else:
+            node2=ready_heap.pop_max()
+            #print(node)
+            t=t+node2[2]
+            Cmax = max(Cmax, t + node2[3])
     return Cmax
