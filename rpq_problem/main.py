@@ -4,6 +4,7 @@ from piority_queue import *
 import time
 import random
 from heap import *
+from carlier_algorithm import *
 
 def read_data_set(file):
     tasks, columns = [int(x) for x in next(file).split()]
@@ -41,71 +42,13 @@ def compute_testing_set(file):
 
 def main():
     path=""
-    file_name="./datasets/" + "in200.txt"
+    file_name="./datasets/" + "rpq0"
 
     try:
         with open(path + file_name, "r") as file:
 
             tasks, r, p, q = read_data_set(file)
-            not_ready_list = [task for task in range(1, tasks + 1)]
-            not_ready_list = np.array((not_ready_list, r, p, q))
-            not_ready_list = np.transpose(not_ready_list)
-            """
-            # tworzenie heap max, pop zwraca max q
-            heap = MinHeap()
-            heap.tab = not_ready_list
-            heap.heap_size = tasks
-            heap.build_heap_min_r_in_node(heap.heap_size)
-            ####
-
-            # tworzenie heap min, pop zwraca min r, dodawanie elementów normalnie poprzez insert
-            heap2 = MaxHeap()
-            ####
-            while(heap.heap_size >0):
-                row = heap.pop_min()
-                print(row)
-                heap2.insert_max_heap(row)
-
-            print("==================")
-            while (heap2.heap_size > 0):
-                print(heap2.pop_max())
-
-            """
-
-            
-            start = time.time()
-            schedule,Cmax = basic_schrage_algorithm(tasks, r, p, q)
-            end = time.time()
-            print("basic schrage")
-            print(Cmax)
-            print(end - start)
-
-            start = time.time()
-            #schedule, Cmax = basic_schrage_algorithm_priority_queue(tasks, r, p, q)
-            #schedule,Cmax = basic_schrage_algorithm_heap(tasks, r, p, q)
-            schedule,Cmax = basic_schrage_algorithm2(tasks, r, p, q)
-            end = time.time()
-            print("basic schrage priority")
-            print(Cmax)
-            print(end - start)
-            
-            start=time.time()
-            Cmax=pmtn_schrage_algorithm(tasks,r,p,q)
-            end=time.time()
-            print("pmtn schrage")
-            print(Cmax)
-            print(end-start)
-
-            
-
-            start=time.time()
-            #Cmax=pmtn_schrage_algorithm_priority_queue(tasks,r,p,q)
-            #Cmax = pmtn_schrage_algorithm_heap(tasks, r, p, q)
-            Cmax = pmtn_schrage_algorithm2(tasks, r, p, q)
-            end=time.time()
-            print("pmtn schrage priority")
-            print(Cmax)
-            print(end-start)
+            carlier_alogrithm(tasks,r,p,q)
             
             
     except FileNotFoundError:
@@ -114,8 +57,8 @@ def main():
 
 
 def testing_main():
-    sets = [50,100,150,200,250,300,400,500]
-    repeat = 5
+    sets = [8000,10000]
+    repeat = 2
 
     for numb in sets:
         time_b = 0
@@ -152,66 +95,57 @@ def testing_main():
                 p[j] = random.randint(5, 100)
                 q[j] = random.randint(10, 100)
 
+            """
             start = time.time()
             schedule, Cmax = (0,0)
             schedule, Cmax = basic_schrage_algorithm(numb, r, p, q)
             end = time.time()
             time_b = time_b + (end - start)
             cmax_b = cmax_b + Cmax
-
+            
             start = time.time()
-            schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
-            #schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
-            #schedule,Cmax = basic_schrage_algorithm2(numb, r, p, q)
-            end = time.time()
-            time_bp = time_bp + (end - start)
-            cmax_bp = cmax_bp + Cmax
-
-            start = time.time()
-            #schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
-            schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
-            #schedule,Cmax = basic_schrage_algorithm2(numb, r, p, q)
-            end = time.time()
-            time_bh = time_bh + (end - start)
-            cmax_bh = cmax_bh + Cmax
-
-            start = time.time()
-            #schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
-            #schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
             schedule,Cmax = basic_schrage_algorithm2(numb, r, p, q)
             end = time.time()
             time_b2 = time_b2 + (end - start)
             cmax_b2 = cmax_b2 + Cmax
-
+            
+            start = time.time()
+            schedule,Cmax = basic_schrage_algorithm_priority_queue(numb, r, p, q)
+            end = time.time()
+            time_bp = time_bp + (end - start)
+            cmax_bp = cmax_bp + Cmax
+            """
+            start = time.time()
+            schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
+            end = time.time()
+            time_bh = time_bh + (end - start)
+            cmax_bh = cmax_bh + Cmax
+            
+            """
             start = time.time()
             Cmax = pmtn_schrage_algorithm(numb, r, p, q)
             end = time.time()
             time_p = time_p + (end - start)
             cmax_p = cmax_p + Cmax
-
+           
             start = time.time()
-            Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
-            #Cmax = pmtn_schrage_algorithm_heap(numb, r, p, q)
-            #Cmax = pmtn_schrage_algorithm2(numb, r, p, q)
-            end = time.time()
-            time_pp = time_pp + (end - start)
-            cmax_pp = cmax_pp + Cmax
-
-            start = time.time()
-            #Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
-            Cmax = pmtn_schrage_algorithm_heap(numb, r, p, q)
-            #Cmax = pmtn_schrage_algorithm2(numb, r, p, q)
-            end = time.time()
-            time_ph = time_ph + (end - start)
-            cmax_ph = cmax_ph + Cmax
-
-            start = time.time()
-            #Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
-            #Cmax = pmtn_schrage_algorithm_heap(numb, r, p, q)
             Cmax = pmtn_schrage_algorithm2(numb, r, p, q)
             end = time.time()
             time_p2 = time_p2 + (end - start)
             cmax_p2 = cmax_p2 + Cmax
+            
+            start = time.time()
+            Cmax = pmtn_schrage_algorithm_priority_queue(numb, r, p, q)
+            end = time.time()
+            time_pp = time_pp + (end - start)
+            cmax_pp = cmax_pp + Cmax
+            
+            start = time.time()
+            Cmax = pmtn_schrage_algorithm_heap(numb, r, p, q)
+            end = time.time()
+            time_ph = time_ph + (end - start)
+            cmax_ph = cmax_ph + Cmax
+            """
 
 
         time_b = time_b/repeat
@@ -238,24 +172,27 @@ def testing_main():
         time_bh = time_bh/repeat
         cmax_bh = cmax_bh/repeat
 
-        print("Pierwotny basic:")
-        print(numb,cmax_b,time_b)
-        print("Priority basic:")
-        print(numb,cmax_bp,time_bp)
-        print("Podstawowa lista basic:")
-        print(numb,cmax_b2,time_b2)
-        print("Heap basic:")
-        print(numb,cmax_bh,time_bh)
-        print("Pierwotny pmtn:")
-        print(numb, cmax_p, time_p)
-        print("Priority pmtn:")
-        print(numb, cmax_pp, time_pp)
-        print("Podstawowa lista pmtn:")
-        print(numb, cmax_p2, time_p2)
-        print("Heap pmtn:")
-        print(numb, cmax_ph, time_ph)
+        #print("Pierwotny basic:")
+        #print(numb,time_b)
+        #print("Priority basic:")
+        #print(numb,time_bp)
+        #print("Podstawowa lista basic:")
+        #print(numb,time_b2)
+        #print("Heap basic:")
+        print(numb,time_bh)
+
+
+        #print("Pierwotny pmtn:")
+        #print(numb, cmax_p, time_p)
+        #print("Priority pmtn:")
+        #print(numb, cmax_pp, time_pp)
+        #print("Podstawowa lista pmtn:")
+        #print(numb, time_p2)
+        #print("Heap pmtn:")
+        #print(numb, time_ph)
+
 
 
 
 if __name__ == '__main__':
-    testing_main()
+    main()

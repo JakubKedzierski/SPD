@@ -216,8 +216,8 @@ def pmtn_schrage_algorithm_heap(tasks, r, p, q):
 
 
 def basic_schrage_algorithm2(tasks, r, p, q):
-
-    schedule = np.zeros(tasks)
+    Cmax_array = []
+    schedule = [None] * tasks
     ready_list = []
     not_ready_list = []
     for i in range(0,tasks):
@@ -246,6 +246,7 @@ def basic_schrage_algorithm2(tasks, r, p, q):
             i = i+1
             t = t+p_j
             Cmax = max(Cmax, t +q_j)
+            Cmax_array.append(Cmax)
     return schedule,Cmax
     
 
