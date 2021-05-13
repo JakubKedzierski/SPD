@@ -5,6 +5,7 @@ import time
 import random
 from heap import *
 from carlier_algorithm import *
+import sys
 
 def read_data_set(file):
     tasks, columns = [int(x) for x in next(file).split()]
@@ -41,6 +42,10 @@ def compute_testing_set(file):
 
 
 def main():
+    sys.setrecursionlimit(4500)
+    # wywala RecursionError: maximum recursion depth exceeded in comparison, mozna probowac to obchodzic przez ten limit
+    # ale wtedy wywala segm fault :(
+
     path=""
     file_name="./datasets/" + "rpq1"
 
@@ -48,7 +53,10 @@ def main():
         with open(path + file_name, "r") as file:
 
             tasks, r, p, q = read_data_set(file)
-            carlier_alogrithm(tasks,r,p,q)
+            schedule = carlier_alogrithm(tasks,r,p,q)
+            cmatrix = count_c_maxtrix(tasks,schedule,r,p,q)
+
+            print(schedule, max(cmatrix))
             
             
     except FileNotFoundError:
