@@ -41,8 +41,36 @@ def find_a_for_carlier(Cmax,r,p,q,schedule,b):
     return min(a_proposition)
 
 def find_c_for_carlier(schedule,a,b,q):
-    pass
+    index_a_in_schedule = schedule.index(a)
+    index_b_in_schedule = schedule.index(b)
+    sublist_to_check = schedule[index_a_in_schedule:index_b_in_schedule]
 
+    q_b = q[b - 1]
+
+    c_proposition = []
+    for task in sublist_to_check:
+        if q[task-1] < q_b:
+            c_proposition.append(task)
+    if len(c_proposition) == 0:
+        return None
+    else:
+        return max(c_proposition)
+
+def get_new_r_q_p_from_k_set(k_set,r,p,q):
+    min_r = r[k_set[0] - 1]
+    min_q = q[k_set[0] - 1]
+    sum_p_j = 0
+
+    for task in k_set:
+        if r[task - 1] < min_r:
+            min_r = r[task - 1]
+
+        if q[task - 1] < min_q:
+            min_q = q[task - 1]
+
+        sum_p_j = sum_p_j + p[task - 1]
+
+    return min_r,min_q,sum_p_j
 
 def carlier_alogrithm(tasks,r,p,q):
     schedule,U = basic_schrage_algorithm2(tasks,r,p,q)
@@ -52,12 +80,37 @@ def carlier_alogrithm(tasks,r,p,q):
         UB = U
         best_schedule = schedule
 
-    #schedule = [1,2,3,4,5,6] do debuggowania
+    #schedule = [1,2,3,4,5,6] #do debuggowania
 
     Cmatrix = count_c_maxtrix(tasks,schedule,r,p,q)
     b = find_b_for_carlier(Cmatrix,schedule)
 
-    #a = find_a_for_carlier(21, r, p, q, schedule, b) do debuggowania 21 Cmax z schedula 1 2 3 4 5 6
+    #a = find_a_for_carlier(21, r, p, q, schedule, b) #do debuggowania 21 Cmax z schedula 1 2 3 4 5 6
     a = find_a_for_carlier(U,r,p,q,schedule,b)
 
     c = find_c_for_carlier(schedule,a,b,q)
+
+    if c is None:
+        return best_schedule
+
+    index_c_in_schedule = schedule.index(c)
+    index_b_in_schedule = schedule.index(b)
+    k_set = schedule[index_c_in_schedule+1:index_b_in_schedule+1]
+
+    min_r, min_q, sum_p_j = get_new_r_q_p_from_k_set(k_set, r, p, q)
+
+    r[c - 1] = max(r[c - 1], (min_r+sum_p_j))
+
+    LB = pmtn_schrage_algorithm2(tasks,r,p,q)
+
+    H_k = min_r + min_q + sum_p_j
+
+    k_set = schedule[index_c_in_schedule:index_b_in_schedule + 1]
+    min_r, min_q, sum_p_j = get_new_r_q_p_from_k_set(k_set, r, p, q)
+    H_k_with_c = min_r + min_q + sum_p_j
+
+    LB = max(H_k, H_k_with_c, LB)
+
+    if LB < UB:
+        carlier_alogrithm(tasks,r,p,q)
+

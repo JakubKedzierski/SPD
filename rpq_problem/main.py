@@ -42,7 +42,7 @@ def compute_testing_set(file):
 
 def main():
     path=""
-    file_name="./datasets/" + "rpq0"
+    file_name="./datasets/" + "rpq1"
 
     try:
         with open(path + file_name, "r") as file:
