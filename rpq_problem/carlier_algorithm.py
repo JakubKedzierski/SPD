@@ -1,21 +1,26 @@
 from schrage_algorithm import *
 import sys
+import copy
 
 # licze Cmatrixa zeby przy liczeniu b skorzystac sobie i wybrac to ostatnie zadanie na sciezce
 def count_c_maxtrix(tasks,schedule,r,p,q):
     t = 0
     Cmatrix = [None] * tasks
+    Smatrix = [None] * tasks
     for i in range(0,tasks):
         S = max(t, r[schedule[i]-1])
+        Smatrix[i] = S
         t = S + p[schedule[i]-1]
         Cmatrix[i] = t + q[schedule[i]-1]
 
-    return Cmatrix
+    return Cmatrix,Smatrix
 
 def find_b_for_carlier(Cmatrix,schedule):
     Cmatrix.reverse()
     index = Cmatrix.index(max(Cmatrix))
-    return schedule[len(Cmatrix) - index - 1]
+    b = schedule[len(Cmatrix) - index - 1]
+    Cmatrix.reverse()
+    return b
     # tu trzeba zwracac ostatnie wystapienie, a nie ma w pythonie rindex
     # ta konstrukcja pozwala na zwrocenie ostatniego wystapienia
 
@@ -36,17 +41,16 @@ def find_a_for_carlier(Cmax,r,p,q,schedule,b):
         sum =  sum + q_b
 
         if sum == Cmax:
-            a_proposition.append(task)  # dodaje do proponowanych poniewaz na koniec trzeba zrobic min ze zbioru
+            return task
 
-    return min(a_proposition)
 
 def find_c_for_carlier(schedule,a,b,q):
     index_a_in_schedule = schedule.index(a)
     index_b_in_schedule = schedule.index(b)
-    sublist_to_check = schedule[index_a_in_schedule:index_b_in_schedule]
+
+    sublist_to_check = schedule[index_a_in_schedule:index_b_in_schedule+1]
 
     q_b = q[b - 1]
-
     c_proposition = []
     for task in sublist_to_check:
         if q[task-1] < q_b:
@@ -54,7 +58,7 @@ def find_c_for_carlier(schedule,a,b,q):
     if len(c_proposition) == 0:
         return None
     else:
-        return max(c_proposition)
+        return c_proposition[-1]
 
 def get_new_r_q_p_from_k_set(k_set,r,p,q):
     min_r = r[k_set[0] - 1]
@@ -74,21 +78,26 @@ def get_new_r_q_p_from_k_set(k_set,r,p,q):
 
 def carlier_alogrithm(tasks,r,p,q):
     schedule,U = basic_schrage_algorithm2(tasks,r,p,q)
+
     best_schedule = []
     UB = sys.maxsize
     if U<UB:
         UB = U
         best_schedule = schedule
 
-    Cmatrix = count_c_maxtrix(tasks,schedule,r,p,q)
+    Cmatrix, Smatrix = count_c_maxtrix(tasks,schedule,r,p,q)
+
     b = find_b_for_carlier(Cmatrix,schedule)
 
     a = find_a_for_carlier(U,r,p,q,schedule,b)
 
     c = find_c_for_carlier(schedule,a,b,q)
 
+
     if c is None:
         return best_schedule
+    #else:
+    #    print(r[a - 1], r[b - 1], r[c - 1])
 
     index_c_in_schedule = schedule.index(c)
     index_b_in_schedule = schedule.index(b)

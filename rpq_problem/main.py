@@ -47,16 +47,17 @@ def main():
     # ale wtedy wywala segm fault :(
 
     path=""
-    file_name="./datasets/" + "rpq1"
+    file_name="./datasets/" + "rpq6"
 
     try:
         with open(path + file_name, "r") as file:
 
             tasks, r, p, q = read_data_set(file)
             schedule = carlier_alogrithm(tasks,r,p,q)
-            cmatrix = count_c_maxtrix(tasks,schedule,r,p,q)
+            Cmatrix,Smatrix = count_c_maxtrix(tasks,schedule,r,p,q)
 
-            print(schedule, max(cmatrix))
+            print("Cmax", max(Cmatrix) )
+            print("Schedule", schedule)
             
             
     except FileNotFoundError:
