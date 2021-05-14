@@ -150,3 +150,122 @@ class Carlier:
         q[c - 1] = q_old
 
         return self.UB
+
+
+    def carlier_alogrithm2(self,tasks,r,p,q):
+        schedule,U = basic_schrage_algorithm2(tasks,r,p,q)
+        equality_list=[]
+
+        if U<self.UB:
+            self.UB = U
+            self.best_schedule = schedule
+        while True:
+            Cmatrix, Smatrix = self.count_c_maxtrix(tasks,schedule,r,p,q)
+
+            b = self.find_b_for_carlier(Cmatrix,schedule)
+
+            a = self.find_a_for_carlier(U,r,p,q,schedule,b)
+
+            c = self.find_c_for_carlier(schedule,a,b,q)
+
+
+            if c is None:
+                break
+                """
+                if len(equality_list)<=0:
+                    break
+                else:
+                    temp=equality_list.pop(0)
+                    r=temp[0]
+                    p=temp[1]
+                    q=temp[2]
+                    U=temp[3]
+                    schedule=temp[4]
+                    continue
+                """
+    #else:
+    #    print(r[a - 1], r[b - 1], r[c - 1])
+
+            index_c_in_schedule = schedule.index(c)
+            index_b_in_schedule = schedule.index(b)
+            k_set = schedule[index_c_in_schedule+1:index_b_in_schedule+1]
+
+            r_k, q_k, p_k = self.get_new_r_q_p_from_k_set(k_set, r, p, q)
+
+            r_old = r[c - 1].copy()
+            r[c - 1] = max(r[c - 1], (r_k+p_k))
+
+            LB1 = pmtn_schrage_algorithm2(tasks,r,p,q)
+
+            H_k = r_k + q_k + p_k
+
+            k_set_with_c = schedule[index_c_in_schedule:index_b_in_schedule + 1]
+            r_k_with_c, q_k_with_c, p_k_with_c = self.get_new_r_q_p_from_k_set(k_set_with_c, r, p, q)
+            H_k_with_c = r_k_with_c + q_k_with_c + p_k_with_c
+
+            LB1 = max(H_k, H_k_with_c, LB1)
+            U1=-1
+            if LB1 < self.UB:
+                schedule1,U1=basic_schrage_algorithm2(tasks,r,p,q)
+
+            r[c - 1] = r_old.copy()
+            q_old = q[c - 1].copy()
+            q[c - 1] = max(q[c - 1], (q_k + p_k))
+
+            LB2 = pmtn_schrage_algorithm2(tasks,r,p,q)
+
+            k_set_with_c = schedule[index_c_in_schedule:index_b_in_schedule + 1]
+            r_k_with_c, q_k_with_c, p_k_with_c = self.get_new_r_q_p_from_k_set(k_set_with_c, r, p, q)
+            H_k_with_c = r_k_with_c + q_k_with_c + p_k_with_c
+            LB2 = max(H_k, H_k_with_c, LB2)
+            U2=-1
+            if LB2 < self.UB:
+                schedule2,U2=basic_schrage_algorithm2(tasks,r,p,q)
+            if U1 ==-1 and U2==-1:
+                break
+            elif U1==-1 and U2!=-1:
+                schedule=schedule2
+                U=U2
+                if U2<self.UB:
+                    self.UB = U2
+                    self.best_schedule = schedule2
+            elif U2==-1 and U1!=-1:
+                schedule=schedule1
+                U=U1
+                q[c - 1] = q_old
+                r[c - 1] = max(r[c - 1], (r_k+p_k))
+                if U1<self.UB:
+                    self.UB = U1
+                    self.best_schedule = schedule1
+            elif U1<U2:
+                schedule=schedule1
+                U=U1
+                q[c - 1] = q_old
+                r[c - 1] = max(r[c - 1], (r_k+p_k))
+                if U1<self.UB:
+                    self.UB = U1
+                    self.best_schedule = schedule1
+            elif U1==U2:
+                q[c - 1] = q_old
+                r[c - 1] = max(r[c - 1], (r_k+p_k))
+                equality_list.append([r,p,q,U1,schedule1])
+                r[c - 1] = r_old.copy()
+                q[c - 1] = max(q[c - 1], (q_k + p_k))
+                schedule=schedule2
+                U=U2
+                if U2<self.UB:
+                    self.UB = U2
+                    self.best_schedule = schedule2
+                
+            else:
+                schedule=schedule2
+                U=U2
+                if U2<self.UB:
+                    self.UB = U2
+                    self.best_schedule = schedule2
+            #print("U1: "+str(U1))
+            #print("U2: "+str(U2))
+
+
+
+        return self.UB
