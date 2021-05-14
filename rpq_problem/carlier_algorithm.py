@@ -92,6 +92,7 @@ class Carlier:
 
     def carlier_alogrithm(self,tasks,r,p,q):
         schedule,U = basic_schrage_algorithm2(tasks,r,p,q)
+        #print(U)
 
         if U<self.UB:
             self.UB = U
@@ -155,11 +156,13 @@ class Carlier:
     def carlier_alogrithm2(self,tasks,r,p,q):
         schedule,U = basic_schrage_algorithm2(tasks,r,p,q)
         equality_list=[]
+        check_equlity_list=False
 
         if U<self.UB:
             self.UB = U
             self.best_schedule = schedule
         while True:
+            #print(U)
             Cmatrix, Smatrix = self.count_c_maxtrix(tasks,schedule,r,p,q)
 
             b = self.find_b_for_carlier(Cmatrix,schedule)
@@ -169,9 +172,8 @@ class Carlier:
             c = self.find_c_for_carlier(schedule,a,b,q)
 
 
-            if c is None:
-                break
-                """
+            if c is None or check_equlity_list==True:
+                
                 if len(equality_list)<=0:
                     break
                 else:
@@ -182,7 +184,7 @@ class Carlier:
                     U=temp[3]
                     schedule=temp[4]
                     continue
-                """
+                
     #else:
     #    print(r[a - 1], r[b - 1], r[c - 1])
 
@@ -222,7 +224,8 @@ class Carlier:
             if LB2 < self.UB:
                 schedule2,U2=basic_schrage_algorithm2(tasks,r,p,q)
             if U1 ==-1 and U2==-1:
-                break
+                q[c - 1] = q_old
+                check_equlity_list=True
             elif U1==-1 and U2!=-1:
                 schedule=schedule2
                 U=U2
@@ -248,7 +251,7 @@ class Carlier:
             elif U1==U2:
                 q[c - 1] = q_old
                 r[c - 1] = max(r[c - 1], (r_k+p_k))
-                equality_list.append([r,p,q,U1,schedule1])
+                equality_list.append([r.copy(),p.copy(),q.copy(),U1,schedule1])
                 r[c - 1] = r_old.copy()
                 q[c - 1] = max(q[c - 1], (q_k + p_k))
                 schedule=schedule2
