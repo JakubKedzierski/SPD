@@ -47,18 +47,22 @@ def main():
     # ale wtedy wywala segm fault :(
 
     path=""
-    file_name="./datasets/" + "rpq6"
+    file_name="./datasets/" + "in200.txt"
 
     try:
         with open(path + file_name, "r") as file:
-
-            tasks, r, p, q = read_data_set(file)
-            schedule = carlier_alogrithm(tasks,r,p,q)
-            Cmatrix,Smatrix = count_c_maxtrix(tasks,schedule,r,p,q)
-
-            print("Cmax", max(Cmatrix) )
-            print("Schedule", schedule)
             
+            tasks, r, p, q = read_data_set(file)
+            carlier = Carlier()
+            print(carlier.carlier_alogrithm(tasks,r,p,q))
+            print(carlier.best_schedule)
+            #schedule = carlier_alogrithm(tasks,r,p,q)
+            #Cmatrix,Smatrix = count_c_maxtrix(tasks,schedule,r,p,q)
+
+            #print("Cmax", max(Cmatrix) )
+            #print("Schedule", schedule)
+            
+            #print(find_c_for_carlier([2,3,4,1],2,1,[5,3,6,6]))
             
     except FileNotFoundError:
         print("File not found.")
