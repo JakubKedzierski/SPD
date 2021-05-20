@@ -15,6 +15,10 @@ def count_c_maxtrix(tasks, schedule, r, p, q):
 
     return Cmatrix, Smatrix
 
+def count_c_max(tasks, schedule, r, p, q):
+    Cmatrix, S = count_c_maxtrix(tasks, schedule, r, p, q)
+    return max(Cmatrix)
+
 class Carlier:
     def __init__(self):
         self.UB=sys.maxsize

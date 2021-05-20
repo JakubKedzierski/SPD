@@ -107,8 +107,8 @@ def generate_all_neighbourhood_swap(schedule):
 
 
 def tabu_search_with_all_neighbours(tasks, machines, time_matrix):
-    tabu_list_max_size = 15
-    max_iter = 20
+    tabu_list_max_size = 20
+    max_iter = 100
     schedule, stuff = johnson_for_N_machines(tasks, machines, time_matrix)
 
     current_schedule = schedule

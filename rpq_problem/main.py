@@ -45,17 +45,45 @@ def compute_testing_set(file):
 def main():
     sys.setrecursionlimit(4500)
 
+    tasks = 2000
+    r = np.zeros(tasks, dtype=int)
+    p = np.zeros(tasks, dtype=int)
+    q = np.zeros(tasks, dtype=int)
+    for j in range(0, tasks):
+        r[j] = random.randint(10, 100)
+        p[j] = random.randint(5, 100)
+        q[j] = random.randint(10, 100)
 
     path=""
-    file_name="./datasets/" + "rpq2"
+    file_name="./datasets/" + "rpq3"
 
     try:
         with open(path + file_name, "r") as file:
-            
-            tasks, r, p, q = read_data_set(file)
+
+
+            #tasks, r, p, q = read_data_set(file)
+
+            start = time.time()
             carlier = Carlier()
-            print(carlier.carlier_alogrithm(tasks,r,p,q))
+            cmax = carlier.carlier_alogrithm2(tasks, r, p, q)
+            end = time.time()
+            print(end-start)
+            print(cmax)
             print(carlier.best_schedule)
+
+            """
+            start = time.time()
+            best_schedule, best_cmax = tabu_search_with_all_neighbours(tasks,r,p,q)
+            end = time.time()
+            print(end - start)
+            print(best_cmax)
+            """
+
+            start = time.time()
+            best_schedule, best_cmax = tabu_search(tasks,r,p,q)
+            end = time.time()
+            print(end - start)
+            print(best_cmax)
 
             
     except FileNotFoundError:
