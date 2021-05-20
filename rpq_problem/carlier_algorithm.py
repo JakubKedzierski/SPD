@@ -89,7 +89,7 @@ class Carlier:
             self.UB = U
             self.best_schedule = schedule
 
-        Cmatrix, Smatrix = self.count_c_maxtrix(tasks,schedule,r,p,q)
+        Cmatrix, Smatrix = count_c_maxtrix(tasks,schedule,r,p,q)
 
         b = self.find_b_for_carlier(Cmatrix,schedule)
 

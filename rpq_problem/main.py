@@ -54,7 +54,7 @@ def main():
             
             tasks, r, p, q = read_data_set(file)
             carlier = Carlier()
-            print(carlier.carlier_alogrithm2(tasks,r,p,q))
+            print(carlier.carlier_alogrithm(tasks,r,p,q))
             print(carlier.best_schedule)
 
             
