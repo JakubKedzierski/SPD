@@ -6,6 +6,7 @@ import random
 from heap import *
 from carlier_algorithm import *
 import sys
+from tabu_search_for_rpq import *
 
 def read_data_set(file):
     tasks, columns = [int(x) for x in next(file).split()]
@@ -43,11 +44,10 @@ def compute_testing_set(file):
 
 def main():
     sys.setrecursionlimit(4500)
-    # wywala RecursionError: maximum recursion depth exceeded in comparison, mozna probowac to obchodzic przez ten limit
-    # ale wtedy wywala segm fault :(
+
 
     path=""
-    file_name="./datasets/" + "in200.txt"
+    file_name="./datasets/" + "rpq2"
 
     try:
         with open(path + file_name, "r") as file:
@@ -56,13 +56,7 @@ def main():
             carlier = Carlier()
             print(carlier.carlier_alogrithm2(tasks,r,p,q))
             print(carlier.best_schedule)
-            #schedule = carlier_alogrithm(tasks,r,p,q)
-            #Cmatrix,Smatrix = count_c_maxtrix(tasks,schedule,r,p,q)
 
-            #print("Cmax", max(Cmatrix) )
-            #print("Schedule", schedule)
-            
-            #print(find_c_for_carlier([2,3,4,1],2,1,[5,3,6,6]))
             
     except FileNotFoundError:
         print("File not found.")

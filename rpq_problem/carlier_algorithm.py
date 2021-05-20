@@ -2,23 +2,26 @@ from schrage_algorithm import *
 import sys
 import copy
 
+
+def count_c_maxtrix(tasks, schedule, r, p, q):
+    t = 0
+    Cmatrix = [None] * tasks
+    Smatrix = [None] * tasks
+    for i in range(0, tasks):
+        S = max(t, r[schedule[i] - 1])
+        Smatrix[i] = S
+        t = S + p[schedule[i] - 1]
+        Cmatrix[i] = t + q[schedule[i] - 1]
+
+    return Cmatrix, Smatrix
+
 class Carlier:
     def __init__(self):
         self.UB=sys.maxsize
         self.best_schedule=[]
 
     # licze Cmatrixa zeby przy liczeniu b skorzystac sobie i wybrac to ostatnie zadanie na sciezce
-    def count_c_maxtrix(self,tasks,schedule,r,p,q):
-        t = 0
-        Cmatrix = [None] * tasks
-        Smatrix = [None] * tasks
-        for i in range(0,tasks):
-            S = max(t, r[schedule[i]-1])
-            Smatrix[i] = S
-            t = S + p[schedule[i]-1]
-            Cmatrix[i] = t + q[schedule[i]-1]
 
-        return Cmatrix,Smatrix
 
     def find_b_for_carlier(self,Cmatrix,schedule):
         Cmatrix.reverse()
@@ -60,19 +63,7 @@ class Carlier:
                 return schedule[j]
             j=j-1
         return None
-        """
-        sublist_to_check = schedule[index_a_in_schedule:index_b_in_schedule+1]
 
-        q_b = q[b - 1]
-        c_proposition = []
-        for task in sublist_to_check:
-            if q[task-1] < q_b:
-                c_proposition.append(task)
-        if len(c_proposition) == 0:
-            return None
-        else:
-            return c_proposition[-1]
-        """
 
     def get_new_r_q_p_from_k_set(self,k_set,r,p,q):
         min_r = r[k_set[0] - 1]
@@ -163,7 +154,7 @@ class Carlier:
             self.best_schedule = schedule
         while True:
             #print(U)
-            Cmatrix, Smatrix = self.count_c_maxtrix(tasks,schedule,r,p,q)
+            Cmatrix, Smatrix = count_c_maxtrix(tasks, schedule, r, p, q)
 
             b = self.find_b_for_carlier(Cmatrix,schedule)
 
