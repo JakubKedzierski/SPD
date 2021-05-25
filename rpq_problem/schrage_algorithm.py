@@ -88,7 +88,7 @@ def basic_schrage_algorithm_heap(tasks, r, p, q):
 
     t = not_ready_heap.tab[0][1]
     Cmax = 0
-    schedule = np.zeros(tasks)
+    schedule = [None] * tasks
     i = 0
     while not ready_heap.isEmpty() or not not_ready_heap.isEmpty():
         while not not_ready_heap.isEmpty() and not_ready_heap.tab[0][1] <= t:
@@ -103,7 +103,7 @@ def basic_schrage_algorithm_heap(tasks, r, p, q):
             #print(node)
             t=t+node[2]
             Cmax = max(Cmax, t + node[3])
-            schedule[i] = node[0]
+            schedule[i] = int(node[0])
             i = i+1
 
     return schedule,Cmax

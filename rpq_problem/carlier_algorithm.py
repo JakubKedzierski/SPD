@@ -25,7 +25,7 @@ class Carlier:
         self.best_schedule=[]
 
     # licze Cmatrixa zeby przy liczeniu b skorzystac sobie i wybrac to ostatnie zadanie na sciezce
-
+    
 
     def find_b_for_carlier(self,Cmatrix,schedule):
         Cmatrix.reverse()
@@ -148,6 +148,70 @@ class Carlier:
         return self.UB
 
 
+    def carlier_alogrithm_heap(self,tasks,r,p,q):
+        schedule,U = basic_schrage_algorithm_heap(tasks,r,p,q)
+        #print(U)
+        #print(schedule)
+
+        if U<self.UB:
+            self.UB = U
+            self.best_schedule = schedule
+
+        Cmatrix, Smatrix = count_c_maxtrix(tasks,schedule,r,p,q)
+
+        b = self.find_b_for_carlier(Cmatrix,schedule)
+
+        a = self.find_a_for_carlier(U,r,p,q,schedule,b)
+
+        c = self.find_c_for_carlier(schedule,a,b,q)
+
+
+        if c is None:
+            return self.UB
+    #else:
+    #    print(r[a - 1], r[b - 1], r[c - 1])
+
+        index_c_in_schedule = schedule.index(c)
+        index_b_in_schedule = schedule.index(b)
+        k_set = schedule[index_c_in_schedule+1:index_b_in_schedule+1]
+
+        r_k, q_k, p_k = self.get_new_r_q_p_from_k_set(k_set, r, p, q)
+
+        r_old = r[c - 1].copy()
+        r[c - 1] = max(r[c - 1], (r_k+p_k))
+
+        LB = pmtn_schrage_algorithm_heap(tasks,r,p,q)
+
+        H_k = r_k + q_k + p_k
+
+        k_set_with_c = schedule[index_c_in_schedule:index_b_in_schedule + 1]
+        r_k_with_c, q_k_with_c, p_k_with_c = self.get_new_r_q_p_from_k_set(k_set_with_c, r, p, q)
+        H_k_with_c = r_k_with_c + q_k_with_c + p_k_with_c
+
+        LB = max(H_k, H_k_with_c, LB)
+
+        if LB < self.UB:
+            self.carlier_alogrithm(tasks,r,p,q)
+
+        r[c - 1] = r_old.copy()
+        q_old = q[c - 1].copy()
+        q[c - 1] = max(q[c - 1], (q_k + p_k))
+
+        LB = pmtn_schrage_algorithm_heap(tasks,r,p,q)
+
+        k_set_with_c = schedule[index_c_in_schedule:index_b_in_schedule + 1]
+        r_k_with_c, q_k_with_c, p_k_with_c = self.get_new_r_q_p_from_k_set(k_set_with_c, r, p, q)
+        H_k_with_c = r_k_with_c + q_k_with_c + p_k_with_c
+        LB = max(H_k, H_k_with_c, LB)
+
+        if LB < self.UB:
+            self.carlier_alogrithm(tasks,r,p,q)
+
+        q[c - 1] = q_old
+
+        return self.UB
+
+
     def carlier_alogrithm2(self,tasks,r,p,q):
         schedule,U = basic_schrage_algorithm2(tasks,r,p,q)
         equality_list=[]
@@ -161,11 +225,11 @@ class Carlier:
             Cmatrix, Smatrix = count_c_maxtrix(tasks, schedule, r, p, q)
 
             b = self.find_b_for_carlier(Cmatrix,schedule)
+            
 
             a = self.find_a_for_carlier(U,r,p,q,schedule,b)
-
+ 
             c = self.find_c_for_carlier(schedule,a,b,q)
-
 
             if c is None or check_equlity_list==True:
                 
@@ -267,3 +331,202 @@ class Carlier:
 
 
         return self.UB
+
+
+
+    def carlier_alogrithm3(self,tasks,r,p,q):
+        schedule,U = basic_schrage_algorithm2(tasks,r,p,q)
+        carlier_list=[]
+        #carlier_list2=[]
+        max_iter=9 #jest to ograniczenie maksymalnej głębokości w celu osiągniecia rozsądnych czasów
+
+        if U<self.UB:
+            self.UB = U
+            self.best_schedule = schedule
+        iter=0
+        while True:
+            #print(U)
+            #Usuwając warunek na liczbe iteracji mamy prawdziwą implementacja przeszukiwania greed
+            if (pmtn_schrage_algorithm2(tasks,r,p,q)!=U) and (iter<=max_iter):
+                Cmatrix, Smatrix = count_c_maxtrix(tasks, schedule, r, p, q)
+
+                b = self.find_b_for_carlier(Cmatrix,schedule)
+                #print("b:"+str(b))
+                a = self.find_a_for_carlier(U,r,p,q,schedule,b)
+                #print("a:"+str(a))
+                c = self.find_c_for_carlier(schedule,a,b,q)
+                #print("c:"+str(c))
+                #print(c)
+                if c is None:
+                    return self.UB
+                
+    #else:
+    #    print(r[a - 1], r[b - 1], r[c - 1])
+
+                index_c_in_schedule = schedule.index(c)
+                index_b_in_schedule = schedule.index(b)
+                k_set = schedule[index_c_in_schedule+1:index_b_in_schedule+1]
+
+                r_k, q_k, p_k = self.get_new_r_q_p_from_k_set(k_set, r, p, q)
+
+                r_old = r[c - 1].copy()
+                r[c - 1] = max(r[c - 1], (r_k+p_k))
+                #print(r[c-1])
+
+                LB1 = pmtn_schrage_algorithm2(tasks,r,p,q)
+
+                H_k = r_k + q_k + p_k
+
+                k_set_with_c = schedule[index_c_in_schedule:index_b_in_schedule + 1]
+                r_k_with_c, q_k_with_c, p_k_with_c = self.get_new_r_q_p_from_k_set(k_set_with_c, r, p, q)
+                H_k_with_c = r_k_with_c + q_k_with_c + p_k_with_c
+                place=0
+                if LB1<self.UB:
+                    LB1 = max(H_k, H_k_with_c, LB1)
+                    if LB1 < self.UB:
+                    #schedule1,U1=basic_schrage_algorithm2(tasks,r,p,q)
+                # if (U1==LB1):
+                    #  self.UB = U1
+                    #  self.best_schedule = schedule1
+                    # return self.UB
+                        carlier_list.insert(place,[r.copy(),p.copy(),q.copy(),LB1,iter+1])
+                        place=place+1
+                    #print(carlier_list)
+
+                r[c - 1] = r_old.copy()
+                q_old = q[c - 1].copy()
+                q[c - 1] = max(q[c - 1], (q_k + p_k))
+
+                LB2 = pmtn_schrage_algorithm2(tasks,r,p,q)
+
+                k_set_with_c = schedule[index_c_in_schedule:index_b_in_schedule + 1]
+                r_k_with_c, q_k_with_c, p_k_with_c = self.get_new_r_q_p_from_k_set(k_set_with_c, r, p, q)
+                H_k_with_c = r_k_with_c + q_k_with_c + p_k_with_c
+                if LB2<self.UB:
+                    LB2 = max(H_k, H_k_with_c, LB2)
+                    if LB2 < self.UB:
+                #schedule2,U2=basic_schrage_algorithm2(tasks,r,p,q)
+                #if (U2==LB2):
+                   # self.UB = U2
+                   # self.best_schedule = schedule2
+                   # return self.UB
+                        carlier_list.insert(place,[r.copy(),p.copy(),q.copy(),LB2,iter+1])
+            if len(carlier_list)>0:
+                temp=[]
+                for i in carlier_list:
+                    temp.append(i[3])
+                temp=carlier_list.pop(temp.index(min(temp)))
+                r=temp[0]
+                p=temp[1]
+                q=temp[2]
+                iter=temp[4]
+                schedule,U=basic_schrage_algorithm2(tasks,r,p,q)
+                #print(temp[3])
+                if U<self.UB:
+                    self.UB = U
+                    self.best_schedule = schedule
+                if self.UB==temp[3]:
+                    return self.UB
+                #print(U)
+            else:
+                return self.UB
+
+
+    def carlier_alogrithm3_heap(self,tasks,r,p,q):
+        schedule,U = basic_schrage_algorithm_heap(tasks,r,p,q)
+        carlier_list=[]
+        #carlier_list2=[]
+        max_iter=9 #jest to ograniczenie maksymalnej głębokości w celu osiągniecia rozsądnych czasów
+
+        if U<self.UB:
+            self.UB = U
+            self.best_schedule = schedule
+        iter=0
+        while True:
+            #print(U)
+            #Usuwając warunek na liczbe iteracji mamy prawdziwą implementacja przeszukiwania greed
+            if (pmtn_schrage_algorithm_heap(tasks,r,p,q)!=U) and (iter<=max_iter):
+                Cmatrix, Smatrix = count_c_maxtrix(tasks, schedule, r, p, q)
+
+                b = self.find_b_for_carlier(Cmatrix,schedule)
+                #print("b:"+str(b))
+                a = self.find_a_for_carlier(U,r,p,q,schedule,b)
+                #print("a:"+str(a))
+                c = self.find_c_for_carlier(schedule,a,b,q)
+                #print("c:"+str(c))
+                #print(c)
+                if c is None:
+                    return self.UB
+                
+    #else:
+    #    print(r[a - 1], r[b - 1], r[c - 1])
+
+                index_c_in_schedule = schedule.index(c)
+                index_b_in_schedule = schedule.index(b)
+                k_set = schedule[index_c_in_schedule+1:index_b_in_schedule+1]
+
+                r_k, q_k, p_k = self.get_new_r_q_p_from_k_set(k_set, r, p, q)
+
+                r_old = r[c - 1].copy()
+                r[c - 1] = max(r[c - 1], (r_k+p_k))
+                #print(r[c-1])
+
+                LB1 = pmtn_schrage_algorithm_heap(tasks,r,p,q)
+
+                H_k = r_k + q_k + p_k
+
+                k_set_with_c = schedule[index_c_in_schedule:index_b_in_schedule + 1]
+                r_k_with_c, q_k_with_c, p_k_with_c = self.get_new_r_q_p_from_k_set(k_set_with_c, r, p, q)
+                H_k_with_c = r_k_with_c + q_k_with_c + p_k_with_c
+                place=0
+                if LB1<self.UB:
+                    LB1 = max(H_k, H_k_with_c, LB1)
+                    if LB1 < self.UB:
+                    #schedule1,U1=basic_schrage_algorithm2(tasks,r,p,q)
+                # if (U1==LB1):
+                    #  self.UB = U1
+                    #  self.best_schedule = schedule1
+                    # return self.UB
+                        carlier_list.insert(place,[r.copy(),p.copy(),q.copy(),LB1,iter+1])
+                        place=place+1
+                    #print(carlier_list)
+
+                r[c - 1] = r_old.copy()
+                q_old = q[c - 1].copy()
+                q[c - 1] = max(q[c - 1], (q_k + p_k))
+
+                LB2 = pmtn_schrage_algorithm_heap(tasks,r,p,q)
+
+                k_set_with_c = schedule[index_c_in_schedule:index_b_in_schedule + 1]
+                r_k_with_c, q_k_with_c, p_k_with_c = self.get_new_r_q_p_from_k_set(k_set_with_c, r, p, q)
+                H_k_with_c = r_k_with_c + q_k_with_c + p_k_with_c
+                if LB2<self.UB:
+                    LB2 = max(H_k, H_k_with_c, LB2)
+                    if LB2 < self.UB:
+                #schedule2,U2=basic_schrage_algorithm2(tasks,r,p,q)
+                #if (U2==LB2):
+                   # self.UB = U2
+                   # self.best_schedule = schedule2
+                   # return self.UB
+                        carlier_list.insert(place,[r.copy(),p.copy(),q.copy(),LB2,iter+1])
+            if len(carlier_list)>0:
+                temp=[]
+                for i in carlier_list:
+                    temp.append(i[3])
+                temp=carlier_list.pop(temp.index(min(temp)))
+                r=temp[0]
+                p=temp[1]
+                q=temp[2]
+                iter=temp[4]
+                schedule,U=basic_schrage_algorithm_heap(tasks,r,p,q)
+                #print(temp[3])
+                if U<self.UB:
+                    self.UB = U
+                    self.best_schedule = schedule
+                if self.UB==temp[3]:
+                    return self.UB
+                #print(U)
+            else:
+                return self.UB
+
+

@@ -55,22 +55,40 @@ def main():
         q[j] = random.randint(10, 100)
 
     path=""
-    file_name="./datasets/" + "rpq3"
+    file_name="./datasets/" + "data004.txt"
 
     try:
         with open(path + file_name, "r") as file:
 
 
-            #tasks, r, p, q = read_data_set(file)
-
+            tasks, r, p, q = read_data_set(file)
+            """
             start = time.time()
             carlier = Carlier()
-            cmax = carlier.carlier_alogrithm2(tasks, r, p, q)
+            cmax = carlier.carlier_alogrithm_heap(tasks, r, p, q)
             end = time.time()
             print(end-start)
             print(cmax)
             print(carlier.best_schedule)
-
+            """
+            """
+            start = time.time()
+            carlier = Carlier()
+            cmax = carlier.carlier_alogrithm3_heap(tasks, r, p, q)
+            end = time.time()
+            print(end-start)
+            print(cmax)
+            print(carlier.best_schedule)
+            """
+            
+            start = time.time()
+            carlier = Carlier()
+            cmax = carlier.carlier_alogrithm3(tasks, r, p, q)
+            end = time.time()
+            print(end-start)
+            print(cmax)
+            print(carlier.best_schedule)
+            
             """
             start = time.time()
             best_schedule, best_cmax = tabu_search_with_all_neighbours(tasks,r,p,q)
@@ -78,13 +96,13 @@ def main():
             print(end - start)
             print(best_cmax)
             """
-
+            '''
             start = time.time()
             best_schedule, best_cmax = tabu_search(tasks,r,p,q)
             end = time.time()
             print(end - start)
             print(best_cmax)
-
+            '''
             
     except FileNotFoundError:
         print("File not found.")
@@ -92,8 +110,8 @@ def main():
 
 
 def testing_main():
-    sets = [8000,10000]
-    repeat = 2
+    sets = [2000,3000,5000,7500,10000]
+    repeat = 3
 
     for numb in sets:
         time_b = 0
@@ -101,7 +119,7 @@ def testing_main():
 
         time_p = 0
         cmax_p = 0
-
+        """
         time_bp = 0
         cmax_bp = 0
 
@@ -119,7 +137,7 @@ def testing_main():
 
         time_bh = 0
         cmax_bh = 0
-
+        """
         for i in range(0, repeat):
    
             r = np.zeros(numb, dtype=int)
@@ -150,12 +168,13 @@ def testing_main():
             time_bp = time_bp + (end - start)
             cmax_bp = cmax_bp + Cmax
             """
+            """
             start = time.time()
             schedule,Cmax = basic_schrage_algorithm_heap(numb, r, p, q)
             end = time.time()
             time_bh = time_bh + (end - start)
             cmax_bh = cmax_bh + Cmax
-            
+            """
             """
             start = time.time()
             Cmax = pmtn_schrage_algorithm(numb, r, p, q)
@@ -181,6 +200,20 @@ def testing_main():
             time_ph = time_ph + (end - start)
             cmax_ph = cmax_ph + Cmax
             """
+            
+            start = time.time()
+            carlier = Carlier()
+            Cmax = carlier.carlier_alogrithm(numb, r.copy(), p.copy(), q.copy())
+            end = time.time()
+            time_b = time_b + (end - start)
+            cmax_b = cmax_b + Cmax
+
+            start = time.time()
+            carlier2 = Carlier()
+            Cmax = carlier2.carlier_alogrithm_heap(numb, r.copy(), p.copy(), q.copy())
+            end = time.time()
+            time_p = time_p + (end - start)
+            cmax_p = cmax_p + Cmax
 
 
         time_b = time_b/repeat
@@ -188,7 +221,7 @@ def testing_main():
 
         time_p = time_p/repeat
         cmax_p = cmax_p/repeat
-
+        """
         time_bp = time_bp/repeat
         cmax_bp = cmax_bp/repeat
 
@@ -206,7 +239,7 @@ def testing_main():
 
         time_bh = time_bh/repeat
         cmax_bh = cmax_bh/repeat
-
+        """
         #print("Pierwotny basic:")
         #print(numb,time_b)
         #print("Priority basic:")
@@ -214,8 +247,10 @@ def testing_main():
         #print("Podstawowa lista basic:")
         #print(numb,time_b2)
         #print("Heap basic:")
-        print(numb,time_bh)
-
+        print("Naiwna struktura:")
+        print(numb,cmax_b,time_b)
+        print("Heap:")
+        print(numb,cmax_p,time_p)
 
         #print("Pierwotny pmtn:")
         #print(numb, cmax_p, time_p)
