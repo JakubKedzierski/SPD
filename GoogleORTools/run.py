@@ -1,14 +1,8 @@
 from ortools.linear_solver import pywraplp
-
+from job_shop_ortools import *
 
 def main():
-  # Instantiate a Glop solver, naming it LinearExample.
-  solver = pywraplp.Solver('LinearExample',
-                           pywraplp.Solver.GLOP_LINEAR_PROGRAMMING)
-
-
-
-
+    job_shop_ortools()
 
 
 
