@@ -45,17 +45,8 @@ def compute_testing_set(file):
 def main():
     sys.setrecursionlimit(4500)
 
-    tasks = 2000
-    r = np.zeros(tasks, dtype=int)
-    p = np.zeros(tasks, dtype=int)
-    q = np.zeros(tasks, dtype=int)
-    for j in range(0, tasks):
-        r[j] = random.randint(10, 100)
-        p[j] = random.randint(5, 100)
-        q[j] = random.randint(10, 100)
-
     path=""
-    file_name="./datasets/" + "data004.txt"
+    file_name="./datasets/" + "data008.txt"
 
     try:
         with open(path + file_name, "r") as file:
@@ -96,13 +87,9 @@ def main():
             print(end - start)
             print(best_cmax)
             """
-            '''
-            start = time.time()
-            best_schedule, best_cmax = tabu_search(tasks,r,p,q)
-            end = time.time()
-            print(end - start)
-            print(best_cmax)
-            '''
+
+
+
             
     except FileNotFoundError:
         print("File not found.")
