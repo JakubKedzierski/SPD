@@ -68,7 +68,7 @@ def job_shop_ortools(filename):
     model.Minimize(cmax_var)
 
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 60.0
+    solver.parameters.max_time_in_seconds = 10.0
     solver.Solve(model)
 
     # Printowanie
