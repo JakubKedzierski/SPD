@@ -134,7 +134,7 @@ def solve_rpq_with_solver(instance: RPQ_Instance):
     status = solver.Solve(model) # solver zwróci status, ale jako typ wyliczeniowy, więc troche nieczytelnie dla nas
 
     if (status is not cp_model.OPTIMAL): # sprawdzamy status, aby określić czy solver znalazł rozwiązanie optymalne
-        status_readable = "not optimal solution :("
+        status_readable = "not optimal solution :( -- nie wiem dlaczego, wyniki sa optymalne a solver mówi że nie"
     else:
         status_readable = "optimum found!"
 
