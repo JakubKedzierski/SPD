@@ -31,10 +31,7 @@ def job_shop_ortools(filename):
     jobshop_matrix, tasks, machines = load_job_shop_insa(filename)
 
     model = cp_model.CpModel()
-
-
     task_type = collections.namedtuple('task_type', 'start end interval')
-
 
     all_tasks = {}
     machine_to_intervals = collections.defaultdict(list)
@@ -45,7 +42,7 @@ def job_shop_ortools(filename):
             machine = task[0]
             duration = task[1]
 
-            start_var = model.NewIntVar(0, worst_possibly_cmax, 'start' ) # tworzenie zmiennych z ograniczeniami (0 - max czas trwania)
+            start_var = model.NewIntVar(0, worst_possibly_cmax, 'start' ) # tworzenie zmiennych z ograniczeniami (0 - max czas trwania), zmienne calkowitoliczbowe
             end_var = model.NewIntVar(0, worst_possibly_cmax, 'end')
 
             interval_var = model.NewIntervalVar(start_var, duration, end_var, 'interval') # interwal - start, czas trwania, koniec
@@ -54,7 +51,7 @@ def job_shop_ortools(filename):
             machine_to_intervals[machine].append(interval_var)
 
     for machine in range(1, machines+1):
-        model.AddNoOverlap(machine_to_intervals[machine])  # ograniczenie na nachodzenie sie zadan
+        model.AddNoOverlap(machine_to_intervals[machine])  # ograniczenie na nachodzenie sie zadan tylko na danej maszynie
 
     for job_id, job in enumerate(jobshop_matrix):
         for task_id in range(len(job) - 1):
@@ -64,8 +61,8 @@ def job_shop_ortools(filename):
 
     cmax_var = model.NewIntVar(0, worst_possibly_cmax, 'cmax')
     model.AddMaxEquality(cmax_var,
-                         [all_tasks[job_id, len(job) - 1].end for job_id, job in enumerate(jobshop_matrix)])  # szukamy najszbyszego zakonczenia zadan
-    model.Minimize(cmax_var)
+                         [all_tasks[job_id, len(job) - 1].end for job_id, job in enumerate(jobshop_matrix)])
+    model.Minimize(cmax_var) # szukamy najszbyszego zakonczenia zadan
 
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = 10.0
