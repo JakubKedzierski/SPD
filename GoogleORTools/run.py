@@ -10,7 +10,6 @@ def rpq_ortools(file_path):
 
 def witi_ortools(file_path):
     test_instance = WiTi_Instance.load_from_file(file_path)
-    test_instance.print_instance()
     objective, pi_order, status = solve_witi_with_solver(test_instance)
     print(f"f(s) (suma wazonych spoznien): {objective}\norder: {pi_order}\n{status}")
 
