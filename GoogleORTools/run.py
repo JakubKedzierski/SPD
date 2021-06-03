@@ -2,6 +2,7 @@ from ortools.linear_solver import pywraplp
 from job_shop_ortools import *
 from rpq_ortools import *
 from witi_ortools import *
+from flowshop_ortools import *
 
 def rpq_ortools(file_path):
     test_instance = RPQ_Instance.load_from_file(file_path)
@@ -17,7 +18,8 @@ def witi_ortools(file_path):
 def main():
     #job_shop_ortools('insa_set')
     #rpq_ortools('datasets/rpq2')
-    witi_ortools('datasets/witi_single_data')
+    witi_ortools('datasets/witi5')
+    #flowshop_ortools('data000.txt')
 
 
 
