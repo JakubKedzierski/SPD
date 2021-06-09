@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 from itertools import permutations
 import time
+from tabu_search_scene import *
 
 
 def read_file_with_lots_of_datasets(file):
@@ -95,13 +96,14 @@ def main():
                 tasks, machines, time_matrix = read_data_set(file)
 
                 start = time.time()
-                schedule_from_func, Cmax = tabu_search(tasks, machines, time_matrix)
+                schedule_from_func, Cmax = tabu_search_scene(tasks, machines, time_matrix)
                 end = time.time()
                 elapsed = end - start
                 print(schedule_from_func)
                 print("Cmax: ",Cmax)
                 print("Time: ",elapsed)
 
+            """
                 start = time.time()
                 schedule_from_func, Cmax = NEH_algorithm(tasks, machines, time_matrix)
                 end = time.time()
@@ -117,7 +119,7 @@ def main():
                 print(schedule_from_func)
                 print("Cmax: ",Cmax)
                 print("Time: ",elapsed)
-
+            """
 
     except FileNotFoundError:
         print("File not found.")

@@ -147,7 +147,7 @@ def solve_rpq_with_solver(instance: RPQ_Instance):
     pi_order.sort(key=lambda x: x[1])
     pi_order = [x[0] for x in pi_order] # modyfikujemy naszą listę, aby przechowywać tylko numer zadań, bez czasów rozpoczęć
 
-    return solver.ObjectiveValue(), pi_order, status_readable # zwracamy cmax, kolejność wykonywania zadań oraz informacje czy znaleźliśmy optimum
+    return solver.ObjectiveValue(), pi_order
 
 
 

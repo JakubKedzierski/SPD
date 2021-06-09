@@ -95,8 +95,9 @@ def solve_witi_with_solver(instance: WiTi_Instance):
     model.AddNoOverlap(model_interval_vars)
 
     for task_number in range(instance.tasks_number):
-        model.Add(model_late_vars[task_number] >= 0)
+        model.Add(model_late_vars[task_number] >= 0) # zeby nie bylo ujemnych spoznien (abs - nie przechodzi)
         model.Add(model_late_vars[task_number] >= (model_ends_vars[task_number] - instance.get_t(task_number)) * instance.get_w(task_number))
+        # koniec - czas * waga
 
     max_t = sum(model_late_vars)
     model.Add(objective >= max_t)
@@ -108,10 +109,6 @@ def solve_witi_with_solver(instance: WiTi_Instance):
 
     status = solver.Solve(model)
 
-    if (status is not cp_model.OPTIMAL):
-        status_readable = "not optimal solution :( -- nie wiem dlaczego, wyniki sa optymalne a solver mówi że nie"
-    else:
-        status_readable = "optimum found!"
 
 
     pi_order = []
@@ -121,5 +118,5 @@ def solve_witi_with_solver(instance: WiTi_Instance):
     pi_order = [x[0] for x in
                 pi_order]
 
-    return solver.ObjectiveValue(), pi_order, status_readable
+    return solver.ObjectiveValue(), pi_order
 
